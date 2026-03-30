@@ -56,13 +56,114 @@ The application is split into two apps:
 
 ---
 
-## Screens
+## Screens And Workflow
 
-<p>
-  <img src="frontend/src/images/task_logo.png" alt="Taskie Logo" width="120" />
-  <img src="frontend/src/images/task_slider.png" alt="Task Slider" width="280" />
-  <img src="frontend/src/images/managers.png" alt="Managers" width="220" />
-  <img src="frontend/src/images/employees.png" alt="Employees" width="220" />
+<p align="center">
+  <img src="images/Homepage1.png" alt="Homepage section 1" width="800" />
+  <br />
+  <em>Homepage - Main landing view introducing the platform and core value.</em>
+</p>
+
+<p align="center">
+  <img src="images/HomePage2.png" alt="Homepage section 2" width="800" />
+  <br />
+  <em>Homepage - Extended section with additional highlights and calls to action.</em>
+</p>
+
+<p align="center">
+  <img src="images/about.png" alt="About page" width="800" />
+  <br />
+  <em>About - Project and team information page.</em>
+</p>
+
+<p align="center">
+  <img src="images/contact.png" alt="Contact page" width="800" />
+  <br />
+  <em>Contact - Communication page for user queries and support.</em>
+</p>
+
+<p align="center">
+  <img src="images/register.png" alt="Register page" width="800" />
+  <br />
+  <em>Register - New user onboarding for Admin, Manager, and Employee roles.</em>
+</p>
+
+<p align="center">
+  <img src="images/AdminLogin.png" alt="Admin login" width="800" />
+  <br />
+  <em>Admin Login - Secure sign-in for administrators.</em>
+</p>
+
+<p align="center">
+  <img src="images/ManagerLogin.png" alt="Manager login" width="800" />
+  <br />
+  <em>Manager Login - Role-based login for managers.</em>
+</p>
+
+<p align="center">
+  <img src="images/employeeLogin.png" alt="Employee login" width="800" />
+  <br />
+  <em>Employee Login - Authentication screen for employees.</em>
+</p>
+
+<p align="center">
+  <img src="images/AdminAddingProject.png" alt="Admin adding project" width="800" />
+  <br />
+  <em>Admin Project Creation - Form for creating a new project.</em>
+</p>
+
+<p align="center">
+  <img src="images/AdminAfterAddingProject.png" alt="Admin after adding project" width="800" />
+  <br />
+  <em>Project Added - Confirmation view after successful project creation.</em>
+</p>
+
+<p align="center">
+  <img src="images/AdminNoAssignmentyetPage.png" alt="Admin no assignment yet" width="800" />
+  <br />
+  <em>Admin Dashboard - Project list where assignments have not started yet.</em>
+</p>
+
+<p align="center">
+  <img src="images/AdminAssignProjectToManager.png" alt="Assign project to manager" width="800" />
+  <br />
+  <em>Assign To Manager - Admin maps a project to a manager.</em>
+</p>
+
+<p align="center">
+  <img src="images/AdminAssignedProjectToManagerStatus.png" alt="Assigned to manager status" width="800" />
+  <br />
+  <em>Manager Assignment Status - Project state after manager assignment.</em>
+</p>
+
+<p align="center">
+  <img src="images/MangerPageBeforeAssign.png" alt="Manager page before assign" width="800" />
+  <br />
+  <em>Manager Dashboard - Manager view before assigning work to employees.</em>
+</p>
+
+<p align="center">
+  <img src="images/ManagerAsssignProjectToEmployee.png" alt="Manager assigns project to employee" width="800" />
+  <br />
+  <em>Assign To Employee - Manager assigns project execution to an employee.</em>
+</p>
+
+<p align="center">
+  <img src="images/EmployeeTaskPage.png" alt="Employee task page" width="800" />
+  <br />
+  <em>Employee Task Board - Employee sees assigned projects and task details.</em>
+</p>
+
+<p align="center">
+  <img src="images/EmployeeUpdateStatus.png" alt="Employee updates status" width="800" />
+  <br />
+  <em>Status Update - Employee updates current project status.</em>
+</p>
+
+<p align="center">
+  <img src="images/UserStatusCompletedFinal.png" alt="Completed final status" width="800" />
+  <br />
+  <em>Completed Workflow - Final completed state after end-to-end task lifecycle.</em>
 </p>
 
 ---
