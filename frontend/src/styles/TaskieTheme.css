@@ -1,0 +1,672 @@
+:root {
+  --taskie-navy: #273c75;
+  --taskie-navy-dark: #1d2f61;
+  --taskie-ink: #4d5f7f;
+  --taskie-soft: #eef2ff;
+  --taskie-surface: #f8fbff;
+  --taskie-surface-strong: #e9efff;
+  --taskie-accent: #ff8a00;
+  --taskie-accent-dark: #e47400;
+  --taskie-accent-soft: #fff1dd;
+  --taskie-border: rgba(39, 60, 117, 0.14);
+  --taskie-shadow: 0 24px 60px rgba(30, 47, 96, 0.12);
+  --taskie-shadow-soft: 0 16px 32px rgba(30, 47, 96, 0.08);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(255, 138, 0, 0.1), transparent 32%),
+    linear-gradient(180deg, #fffdf9 0%, #f5f8ff 42%, #eef3ff 100%);
+  color: var(--taskie-ink);
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Segoe UI", sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+.taskie-site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(18px);
+  background: rgba(255, 255, 255, 0.88);
+  border-bottom: 1px solid rgba(39, 60, 117, 0.08);
+}
+
+.taskie-header-shell {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0.9rem 1.25rem;
+}
+
+.taskie-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.taskie-brand-mark {
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+  border-radius: 18px;
+  padding: 0.35rem;
+  background: linear-gradient(145deg, #fff7eb, #eef3ff);
+  box-shadow: var(--taskie-shadow-soft);
+}
+
+.taskie-brand-copy {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+}
+
+.taskie-brand-name {
+  color: var(--taskie-navy-dark);
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+}
+
+.taskie-brand-subtitle {
+  color: var(--taskie-ink);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.taskie-primary-nav,
+.taskie-role-nav,
+.taskie-auth-nav {
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.taskie-primary-nav .nav-link,
+.taskie-role-nav .nav-link {
+  border-radius: 999px;
+  color: var(--taskie-navy);
+  font-size: 0.96rem;
+  font-weight: 700;
+  padding: 0.6rem 0.95rem !important;
+  transition: background-color 0.2s ease, color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.taskie-primary-nav .nav-link:hover,
+.taskie-role-nav .nav-link:hover {
+  background: rgba(39, 60, 117, 0.08);
+  color: var(--taskie-navy-dark);
+  transform: translateY(-1px);
+}
+
+.taskie-nav-button {
+  align-items: center;
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 0.95rem;
+  font-weight: 800;
+  justify-content: center;
+  min-width: 118px;
+  padding: 0.78rem 1.2rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.taskie-nav-button:hover,
+.taskie-button:hover {
+  box-shadow: 0 12px 26px rgba(255, 138, 0, 0.22);
+  transform: translateY(-2px);
+}
+
+.taskie-nav-button-secondary,
+.taskie-button-secondary {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--taskie-border);
+  color: var(--taskie-navy);
+}
+
+.taskie-nav-button-primary,
+.taskie-button-primary {
+  background: linear-gradient(135deg, var(--taskie-accent), #ff9f38);
+  color: #ffffff;
+}
+
+.taskie-home {
+  overflow: hidden;
+}
+
+.taskie-hero,
+.taskie-feature-section,
+.taskie-team-section,
+.taskie-cta-section,
+.taskie-page-section {
+  margin: 0 auto;
+  max-width: 1320px;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.taskie-hero {
+  align-items: center;
+  display: grid;
+  gap: 3rem;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  min-height: calc(100vh - 88px);
+  padding-top: 3.5rem;
+}
+
+.taskie-hero-copy,
+.taskie-team-copy,
+.taskie-page-copy {
+  max-width: 620px;
+}
+
+.taskie-kicker {
+  align-items: center;
+  background: var(--taskie-accent-soft);
+  border: 1px solid rgba(255, 138, 0, 0.18);
+  border-radius: 999px;
+  color: var(--taskie-accent-dark);
+  display: inline-flex;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  padding: 0.55rem 0.9rem;
+  text-transform: uppercase;
+}
+
+.taskie-kicker-light {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+}
+
+.taskie-home-title,
+.taskie-section-title,
+.taskie-page-title {
+  color: var(--taskie-navy-dark);
+  font-size: clamp(2.5rem, 5.6vw, 4.8rem);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 1.02;
+  margin: 1.1rem 0 1.25rem;
+}
+
+.taskie-section-title,
+.taskie-page-title {
+  font-size: clamp(2rem, 4vw, 3.35rem);
+}
+
+.taskie-home-copy,
+.taskie-section-copy,
+.taskie-page-copy p,
+.taskie-cta-copy p {
+  color: var(--taskie-ink);
+  font-size: 1.08rem;
+  line-height: 1.75;
+  margin: 0;
+}
+
+.taskie-bullet-list,
+.taskie-check-grid {
+  display: grid;
+  gap: 0.9rem;
+  margin: 1.8rem 0 0;
+  padding: 0;
+}
+
+.taskie-bullet-list li,
+.taskie-check-item {
+  align-items: flex-start;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(39, 60, 117, 0.08);
+  border-radius: 20px;
+  box-shadow: var(--taskie-shadow-soft);
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: auto 1fr;
+  list-style: none;
+  padding: 0.95rem 1rem;
+}
+
+.taskie-bullet-index,
+.taskie-check-icon {
+  align-items: center;
+  background: linear-gradient(145deg, var(--taskie-accent), #ffad4e);
+  border-radius: 14px;
+  color: #ffffff;
+  display: inline-flex;
+  font-size: 0.8rem;
+  font-weight: 800;
+  height: 2rem;
+  justify-content: center;
+  min-width: 2rem;
+}
+
+.taskie-bullet-copy strong,
+.taskie-check-copy strong {
+  color: var(--taskie-navy-dark);
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 0.2rem;
+}
+
+.taskie-bullet-copy span,
+.taskie-check-copy span {
+  color: var(--taskie-ink);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.taskie-cta-group,
+.taskie-footer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-top: 2rem;
+}
+
+.taskie-button {
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 0.98rem;
+  font-weight: 800;
+  justify-content: center;
+  min-width: 156px;
+  padding: 0.95rem 1.35rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.taskie-helper-copy {
+  color: var(--taskie-ink);
+  font-size: 0.92rem;
+  margin-top: 1rem;
+}
+
+.taskie-image-frame {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), #edf3ff);
+  border: 1px solid rgba(39, 60, 117, 0.08);
+  border-radius: 34px;
+  box-shadow: var(--taskie-shadow);
+  overflow: hidden;
+  padding: 1rem;
+}
+
+.taskie-image-frame img {
+  border-radius: 24px;
+  display: block;
+  width: 100%;
+}
+
+.taskie-feature-section {
+  padding-top: 0;
+}
+
+.taskie-feature-shell {
+  background: linear-gradient(180deg, rgba(233, 239, 255, 0.96), #f8faff);
+  border: 1px solid rgba(39, 60, 117, 0.08);
+  border-radius: 42px;
+  box-shadow: var(--taskie-shadow);
+  padding: 3rem;
+}
+
+.taskie-section-heading {
+  max-width: 760px;
+}
+
+.taskie-section-heading p {
+  color: var(--taskie-ink);
+  font-size: 1.06rem;
+  line-height: 1.7;
+  margin: 1rem 0 0;
+}
+
+.taskie-feature-image {
+  margin-top: 2.25rem;
+}
+
+.taskie-feature-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 2rem;
+}
+
+.taskie-feature-card,
+.taskie-info-card,
+.taskie-value-card,
+.taskie-contact-panel {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(39, 60, 117, 0.08);
+  border-radius: 24px;
+  box-shadow: var(--taskie-shadow-soft);
+  padding: 1.4rem;
+}
+
+.taskie-feature-card h3,
+.taskie-info-card h3,
+.taskie-value-card h3,
+.taskie-contact-panel h3 {
+  color: var(--taskie-navy-dark);
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin-bottom: 0.55rem;
+}
+
+.taskie-feature-card p,
+.taskie-info-card p,
+.taskie-value-card p,
+.taskie-contact-panel p,
+.taskie-contact-detail {
+  color: var(--taskie-ink);
+  line-height: 1.65;
+  margin: 0;
+}
+
+.taskie-team-section {
+  align-items: center;
+  display: grid;
+  gap: 3rem;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+}
+
+.taskie-check-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.taskie-check-item {
+  background: #ffffff;
+}
+
+.taskie-check-icon {
+  background: linear-gradient(145deg, var(--taskie-navy), #4b63a8);
+}
+
+.taskie-cta-section {
+  padding-top: 0;
+}
+
+.taskie-cta-shell {
+  background:
+    linear-gradient(100deg, rgba(29, 47, 97, 0.86), rgba(29, 47, 97, 0.5));
+  border-radius: 42px;
+  box-shadow: var(--taskie-shadow);
+  color: #ffffff;
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+  overflow: hidden;
+  padding: 3rem;
+}
+
+.taskie-cta-copy h2 {
+  color: #ffffff;
+}
+
+.taskie-cta-copy p {
+  color: rgba(255, 255, 255, 0.86);
+  margin-top: 1rem;
+}
+
+.taskie-cta-panel {
+  align-self: center;
+  backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 28px;
+  box-shadow: 0 24px 50px rgba(11, 18, 44, 0.24);
+  color: var(--taskie-ink);
+  padding: 2rem;
+}
+
+.taskie-cta-panel h3 {
+  color: var(--taskie-navy-dark);
+  font-size: 1.55rem;
+  font-weight: 800;
+  margin-bottom: 0.65rem;
+}
+
+.taskie-cta-panel p {
+  color: var(--taskie-ink);
+  margin: 0;
+}
+
+.taskie-cta-stack {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 1.6rem;
+}
+
+.taskie-cta-note {
+  color: var(--taskie-ink);
+  font-size: 0.92rem;
+  margin-top: 1rem;
+}
+
+.taskie-page {
+  padding-top: 1.2rem;
+}
+
+.taskie-page-hero {
+  align-items: stretch;
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+}
+
+.taskie-page-panel {
+  background: linear-gradient(180deg, rgba(233, 239, 255, 0.96), #ffffff);
+  border: 1px solid rgba(39, 60, 117, 0.08);
+  border-radius: 30px;
+  box-shadow: var(--taskie-shadow-soft);
+  padding: 2rem;
+}
+
+.taskie-page-panel ul {
+  display: grid;
+  gap: 0.85rem;
+  margin: 1.3rem 0 0;
+  padding-left: 1.15rem;
+}
+
+.taskie-page-panel li,
+.taskie-contact-list li {
+  color: var(--taskie-ink);
+  line-height: 1.6;
+}
+
+.taskie-page-grid,
+.taskie-contact-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 2rem;
+}
+
+.taskie-contact-list {
+  display: grid;
+  gap: 0.8rem;
+  margin: 1.25rem 0 0;
+  padding-left: 1.15rem;
+}
+
+.taskie-footer {
+  background: #1f2e5b;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 3rem;
+}
+
+.taskie-footer-shell {
+  margin: 0 auto;
+  max-width: 1320px;
+  padding: 3.25rem 1.5rem 1.6rem;
+}
+
+.taskie-footer-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1.3fr) repeat(3, minmax(0, 0.8fr));
+}
+
+.taskie-footer-brand {
+  max-width: 360px;
+}
+
+.taskie-footer-brand h3,
+.taskie-footer-column h4 {
+  color: #ffffff;
+  font-weight: 800;
+  margin-bottom: 0.9rem;
+}
+
+.taskie-footer-column {
+  display: grid;
+  gap: 0.75rem;
+  justify-content: flex-start;
+}
+
+.taskie-footer-link {
+  color: rgba(255, 255, 255, 0.78);
+  font-weight: 600;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.taskie-footer-link:hover {
+  color: #ffffff;
+  transform: translateX(2px);
+}
+
+.taskie-footer-divider {
+  border-color: rgba(255, 255, 255, 0.12);
+  margin: 1.8rem 0 1rem;
+}
+
+.taskie-footer-bottom {
+  color: rgba(255, 255, 255, 0.68);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.92rem;
+  gap: 0.6rem 1.4rem;
+  justify-content: space-between;
+}
+
+@keyframes taskieFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.taskie-hero,
+.taskie-feature-shell,
+.taskie-team-section,
+.taskie-cta-shell,
+.taskie-page-hero,
+.taskie-page-grid,
+.taskie-contact-grid {
+  animation: taskieFadeUp 0.7s ease both;
+}
+
+@media (max-width: 1199px) {
+  .taskie-feature-grid,
+  .taskie-page-grid,
+  .taskie-contact-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .taskie-footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 991px) {
+  .taskie-header-shell {
+    padding: 0.9rem 1rem;
+  }
+
+  .taskie-hero,
+  .taskie-team-section,
+  .taskie-cta-shell,
+  .taskie-page-hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .taskie-hero {
+    min-height: auto;
+    padding-top: 2rem;
+  }
+
+  .taskie-feature-shell,
+  .taskie-cta-shell {
+    padding: 2rem;
+  }
+
+  .taskie-check-grid,
+  .taskie-feature-grid,
+  .taskie-page-grid,
+  .taskie-contact-grid,
+  .taskie-footer-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .taskie-role-nav {
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .taskie-brand-name {
+    font-size: 1.1rem;
+  }
+
+  .taskie-brand-subtitle {
+    font-size: 0.68rem;
+  }
+
+  .taskie-home-title,
+  .taskie-section-title,
+  .taskie-page-title {
+    font-size: 2.2rem;
+  }
+
+  .taskie-hero,
+  .taskie-feature-section,
+  .taskie-team-section,
+  .taskie-cta-section,
+  .taskie-page-section {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .taskie-feature-shell,
+  .taskie-cta-shell,
+  .taskie-page-panel {
+    border-radius: 28px;
+    padding: 1.4rem;
+  }
+
+  .taskie-cta-panel {
+    padding: 1.4rem;
+  }
+
+  .taskie-button,
+  .taskie-nav-button {
+    width: 100%;
+  }
+
+  .taskie-cta-group,
+  .taskie-footer-actions {
+    display: grid;
+  }
+}

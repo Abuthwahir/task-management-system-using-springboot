@@ -1,0 +1,133 @@
+.section {
+  padding: 6rem 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 4rem;
+}
+
+.section.reversed {
+  direction: rtl;
+}
+
+.section.reversed > * {
+  direction: ltr;
+}
+
+.section-content h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  line-height: 1.3;
+}
+
+.section-illustration {
+    min-height: 350px;
+    background: var(--glass-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 1.5rem;
+    backdrop-filter: blur(10px);
+}
+
+.cta-section {
+    text-align: center;
+    padding: 6rem 0;
+}
+
+.cta-section h2 {
+    font-size: 2.5rem;
+}
+
+.cta-section .btn {
+    margin-top: 1.5rem;
+    padding: 1rem 2.5rem;
+    font-size: 1.2rem;
+}
+
+/* Workflow Illustration */
+.workflow-illustration .workflow-card {
+    background: var(--bg-color-light);
+    border-radius: 15px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.workflow-card .icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.icon.plan { background: var(--primary-color); }
+.icon.organize { background: var(--secondary-color); }
+
+.workflow-card .text {
+    flex: 1;
+}
+
+/* Productivity Illustration */
+.productivity-illustration {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.productivity-avatars {
+    display: flex;
+}
+
+.productivity-avatars .avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 3px solid var(--bg-color-dark);
+    margin-left: -15px;
+}
+
+.avatar.a1 { background-color: #f87171; }
+.avatar.a2 { background-color: #fbbf24; }
+.avatar.a3 { background-color: #34d399; }
+
+
+.productivity-chart {
+    height: 150px;
+    width: 200px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+}
+
+.chart-line {
+    width: 100%;
+    height: 3px;
+    background-color: var(--primary-color);
+    position: relative;
+}
+
+.chart-line::before {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    top: -3.5px;
+    animation: move-dot 3s linear infinite;
+}
+
+@keyframes move-dot {
+    from { left: 0; }
+    to { left: 95%; }
+}

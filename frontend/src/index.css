@@ -1,0 +1,54 @@
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.custom-bg {
+  background-color: #f8fbff;
+}
+
+.text-color {
+  color: #273c75;
+}
+
+.text-color1 {
+  color: #ff8a00;
+}
+
+.border-color {
+  border-color: rgba(39, 60, 117, 0.14);
+}
+
+.custom-bg-text {
+  color: #ffffff;
+}
+
+.bg-color {
+  background: linear-gradient(135deg, #ff8a00, #ff9f38);
+}
+
+.rounded-card {
+  padding: 1.5em .5em .5em;
+  border-radius: 2em;
+  box-shadow: 0 16px 32px rgba(30, 47, 96, 0.08);
+}
+
+.form-card {
+  padding: .2em .2em .2em;
+  border-radius: 1em;
+  box-shadow: 0 16px 32px rgba(30, 47, 96, 0.08);
+}
+
+.card {
+  transition: transform 0.2s ease;
+}
+
+.card:hover .product-card {
+  transform: scale(1.02);
+}
