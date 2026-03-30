@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class UserLoginResponseDto extends CommonApiResponse {
-	
-	private UserLoginResponse user;
 
+  private UserLoginResponse user;
 }

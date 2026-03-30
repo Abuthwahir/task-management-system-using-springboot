@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom";
-import logo from "../images/task_logo.png";
-import RoleNav from "./RoleNav";
+import { Link } from 'react-router-dom';
+import logo from '../images/task_logo.png';
+import RoleNav from './RoleNav';
 
 const Header = () => {
   return (
@@ -8,11 +8,7 @@ const Header = () => {
       <nav className="navbar navbar-expand-lg">
         <div className="container-fluid taskie-header-shell">
           <Link to="/" className="navbar-brand taskie-brand">
-            <img
-              src={logo}
-              className="taskie-brand-mark"
-              alt="TASKIE logo"
-            />
+            <img src={logo} className="taskie-brand-mark" alt="TASKIE logo" />
             <span className="taskie-brand-copy">
               <span className="taskie-brand-name">TASKIE</span>
               <span className="taskie-brand-subtitle">

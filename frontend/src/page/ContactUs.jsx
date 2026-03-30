@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
-import Footer from "./Footer";
+import { Link } from 'react-router-dom';
+import Footer from './Footer';
 const ContactUs = () => {
   return (
     <div className="taskie-page">

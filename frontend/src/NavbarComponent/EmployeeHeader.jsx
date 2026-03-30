@@ -1,14 +1,14 @@
-import { Link, useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { clearActiveUserSession } from "../utils/authSession";
+import { Link, useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { clearActiveUserSession } from '../utils/authSession';
 
 const EmployeeHeader = () => {
   const navigate = useNavigate();
 
   const employeeLogout = () => {
-    toast.success("logged out!!!", {
-      position: "top-center",
+    toast.success('logged out!!!', {
+      position: 'top-center',
       autoClose: 1500,
       hideProgressBar: false,
       closeOnClick: true,
@@ -16,8 +16,8 @@ const EmployeeHeader = () => {
       draggable: true,
       progress: undefined,
     });
-    clearActiveUserSession("employee");
-    navigate("/home");
+    clearActiveUserSession('employee');
+    navigate('/home');
   };
 
   return (
@@ -43,7 +43,12 @@ const EmployeeHeader = () => {
       </li>
 
       <li className="nav-item">
-        <Link to="/home" className="nav-link" aria-current="page" onClick={employeeLogout}>
+        <Link
+          to="/home"
+          className="nav-link"
+          aria-current="page"
+          onClick={employeeLogout}
+        >
           Logout
         </Link>
         <ToastContainer />

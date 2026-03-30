@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
-import { ToastContainer, toast } from "react-toastify";
-import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import { useState, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 
 const UpdateProjectStatus = () => {
   const [updateStatusRequest, setUpdateStatusRequest] = useState({
-    projectId: "",
-    projectStatus: "",
+    projectId: '',
+    projectStatus: '',
   });
 
   const [allStatus, setAllStatus] = useState([]);
@@ -25,7 +25,7 @@ const UpdateProjectStatus = () => {
   useEffect(() => {
     setUpdateStatusRequest((prev) => ({
       ...prev,
-      projectId: project?.id || "",
+      projectId: project?.id || '',
     }));
 
     const getAllStatus = async () => {
@@ -40,7 +40,7 @@ const UpdateProjectStatus = () => {
 
   const retrieveAllStatus = async () => {
     const response = await axios.get(
-      "http://localhost:8080/api/project/allStatus"
+      'http://localhost:8080/api/project/allStatus',
     );
     console.log(response.data);
     return response.data;
@@ -49,23 +49,23 @@ const UpdateProjectStatus = () => {
   const updateProjectStatus = (e) => {
     e.preventDefault();
 
-    fetch("http://localhost:8080/api/project/update", {
-      method: "POST",
+    fetch('http://localhost:8080/api/project/update', {
+      method: 'POST',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(updateStatusRequest),
     }).then((result) => {
-      console.log("result", result);
+      console.log('result', result);
       result.json().then((res) => {
         console.log(res);
 
         if (res.success) {
-          console.log("Got the success response");
+          console.log('Got the success response');
 
           toast.success(res.responseMessage, {
-            position: "top-center",
+            position: 'top-center',
             autoClose: 1000,
             hideProgressBar: false,
             closeOnClick: true,
@@ -75,12 +75,12 @@ const UpdateProjectStatus = () => {
           });
 
           setTimeout(() => {
-            navigate("/user/employee/project/all");
+            navigate('/user/employee/project/all');
           }, 1000); // Redirect after 3 seconds
         } else {
           console.log("Didn't got success response");
-          toast.error("It seems server is down", {
-            position: "top-center",
+          toast.error('It seems server is down', {
+            position: 'top-center',
             autoClose: 1000,
             hideProgressBar: false,
             closeOnClick: true,
@@ -101,7 +101,7 @@ const UpdateProjectStatus = () => {
       <div className="mt-2 d-flex aligns-items-center justify-content-center">
         <div
           className="card form-card border-color custom-bg"
-          style={{ width: "25rem" }}
+          style={{ width: '25rem' }}
         >
           <div className="card-header bg-color text-center custom-bg-text">
             <h5 className="card-title">Update Project Status</h5>

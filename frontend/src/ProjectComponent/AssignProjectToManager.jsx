@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
-import { ToastContainer, toast } from "react-toastify";
-import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import { useState, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 
 const AssignProjectToManager = () => {
   const [assignRequest, setAssignRequest] = useState({
-    managerId: "",
-    projectId: "",
+    managerId: '',
+    projectId: '',
   });
 
   const [allManagers, setAllManagers] = useState([]);
@@ -25,7 +25,7 @@ const AssignProjectToManager = () => {
   useEffect(() => {
     setAssignRequest((prev) => ({
       ...prev,
-      projectId: project?.id || "",
+      projectId: project?.id || '',
     }));
 
     const getAllManager = async () => {
@@ -40,7 +40,7 @@ const AssignProjectToManager = () => {
 
   const retrieveAllManagers = async () => {
     const response = await axios.get(
-      "http://localhost:8080/api/user/manager/all"
+      'http://localhost:8080/api/user/manager/all',
     );
     console.log(response.data);
     return response.data;
@@ -49,23 +49,23 @@ const AssignProjectToManager = () => {
   const assignProject = (e) => {
     e.preventDefault();
 
-    fetch("http://localhost:8080/api/project/update", {
-      method: "POST",
+    fetch('http://localhost:8080/api/project/update', {
+      method: 'POST',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(assignRequest),
     }).then((result) => {
-      console.log("result", result);
+      console.log('result', result);
       result.json().then((res) => {
         console.log(res);
 
         if (res.success) {
-          console.log("Got the success response");
+          console.log('Got the success response');
 
           toast.success(res.responseMessage, {
-            position: "top-center",
+            position: 'top-center',
             autoClose: 1000,
             hideProgressBar: false,
             closeOnClick: true,
@@ -75,12 +75,12 @@ const AssignProjectToManager = () => {
           });
 
           setTimeout(() => {
-            navigate("/user/admin/project/all");
+            navigate('/user/admin/project/all');
           }, 1000); // Redirect after 3 seconds
         } else {
           console.log("Didn't got success response");
-          toast.error("It seems server is down", {
-            position: "top-center",
+          toast.error('It seems server is down', {
+            position: 'top-center',
             autoClose: 1000,
             hideProgressBar: false,
             closeOnClick: true,
@@ -101,7 +101,7 @@ const AssignProjectToManager = () => {
       <div className="mt-2 d-flex aligns-items-center justify-content-center">
         <div
           className="card form-card border-color custom-bg"
-          style={{ width: "25rem" }}
+          style={{ width: '25rem' }}
         >
           <div className="card-header bg-color text-center custom-bg-text">
             <h5 className="card-title">Assign Project To Manager</h5>
@@ -174,8 +174,8 @@ const AssignProjectToManager = () => {
                   {allManagers.map((manager) => {
                     return (
                       <option key={manager.id} value={manager.id}>
-                        {" "}
-                        {manager.firstName + " " + manager.lastName}{" "}
+                        {' '}
+                        {manager.firstName + ' ' + manager.lastName}{' '}
                       </option>
                     );
                   })}

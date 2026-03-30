@@ -12,24 +12,40 @@ const Footer = () => {
         <div className="footer-links">
           <h4>Quick Links</h4>
           <ul>
-            <li><a href="#home">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li>
+              <a href="#home">Home</a>
+            </li>
+            <li>
+              <a href="#about">About</a>
+            </li>
+            <li>
+              <a href="#contact">Contact</a>
+            </li>
           </ul>
         </div>
         <div className="footer-links">
           <h4>Legal</h4>
           <ul>
-            <li><a href="#">Privacy Policy</a></li>
-            <li><a href="#">Terms of Service</a></li>
+            <li>
+              <a href="#!">Privacy Policy</a>
+            </li>
+            <li>
+              <a href="#!">Terms of Service</a>
+            </li>
           </ul>
         </div>
         <div className="footer-links">
           <h4>Social</h4>
           <ul>
-            <li><a href="#">Twitter</a></li>
-            <li><a href="#">LinkedIn</a></li>
-            <li><a href="#">Github</a></li>
+            <li>
+              <a href="#!">Twitter</a>
+            </li>
+            <li>
+              <a href="#!">LinkedIn</a>
+            </li>
+            <li>
+              <a href="#!">Github</a>
+            </li>
           </ul>
         </div>
       </div>

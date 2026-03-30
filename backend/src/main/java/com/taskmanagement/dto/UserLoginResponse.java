@@ -5,28 +5,27 @@ import lombok.Data;
 @Data
 public class UserLoginResponse {
 
-	private int id;
-	
-	private String firstName;
+  private int id;
 
-	private String lastName;
+  private String firstName;
 
-	private int age;
+  private String lastName;
 
-	private String sex;
+  private int age;
 
-	private String emailId;
+  private String sex;
 
-	private String contact;
+  private String emailId;
 
-	private String street;
+  private String contact;
 
-	private String city;
+  private String street;
 
-	private String pincode;
-	
-	private String role;
-	
-	private String jwtToken;
+  private String city;
 
+  private String pincode;
+
+  private String role;
+
+  private String jwtToken;
 }

@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
-import Footer from "./Footer";
+import { Link } from 'react-router-dom';
+import Footer from './Footer';
 
 const AboutUs = () => {
   return (
@@ -14,8 +14,8 @@ const AboutUs = () => {
             <p>
               TASKIE is a role-based task management system for teams that need
               a simple operational flow. Instead of juggling separate tools for
-              planning, staffing, and status tracking, the platform keeps admins,
-              managers, and employees on the same page.
+              planning, staffing, and status tracking, the platform keeps
+              admins, managers, and employees on the same page.
             </p>
             <div className="taskie-cta-group">
               <Link

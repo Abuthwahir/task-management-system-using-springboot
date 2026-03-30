@@ -1,10 +1,21 @@
 package com.taskmanagement.controller;
 
+import com.taskmanagement.dto.CommonApiResponse;
+import com.taskmanagement.dto.ProjectDto;
+import com.taskmanagement.dto.ProjectResponseDto;
+import com.taskmanagement.dto.UpdateProjectRequestDto;
+import com.taskmanagement.entity.Project;
+import com.taskmanagement.entity.User;
+import com.taskmanagement.service.ProjectService;
+import com.taskmanagement.service.UserService;
+import com.taskmanagement.utility.Constants.ProjectAssignStatus;
+import com.taskmanagement.utility.Constants.ProjectStatus;
+import com.taskmanagement.utility.Constants.UserRole;
+import io.swagger.annotations.ApiOperation;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,790 +30,726 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.taskmanagement.dto.CommonApiResponse;
-import com.taskmanagement.dto.ProjectDto;
-import com.taskmanagement.dto.ProjectResponseDto;
-import com.taskmanagement.dto.UpdateProjectRequestDto;
-import com.taskmanagement.entity.Project;
-import com.taskmanagement.entity.User;
-import com.taskmanagement.service.ProjectService;
-import com.taskmanagement.service.UserService;
-import com.taskmanagement.utility.Constants.ProjectAssignStatus;
-import com.taskmanagement.utility.Constants.ProjectStatus;
-import com.taskmanagement.utility.Constants.UserRole;
-
-import io.swagger.annotations.ApiOperation;
-
 @RestController
 @RequestMapping("api/project/")
 @CrossOrigin(origins = "${app.cors.allowed-origin:http://localhost:3000}")
 public class ProjectController {
-	
-	Logger LOG = LoggerFactory.getLogger(ProjectController.class);
 
-	@Autowired
-    private ProjectService projectService;
-	
-	@Autowired
-	private UserService userService;
-	
-	@PostMapping("add")
-	@ApiOperation(value = "Api to add project")
-	public ResponseEntity<CommonApiResponse> addProject(@RequestBody Project project) {
-		
-		LOG.info("Recieved request for adding the project");
+  Logger LOG = LoggerFactory.getLogger(ProjectController.class);
 
-		CommonApiResponse response = new CommonApiResponse();
+  @Autowired private ProjectService projectService;
 
-		 // Get today's date
-        LocalDate today = LocalDate.now();
+  @Autowired private UserService userService;
 
-        // Define the desired format yyyy-mm-dd
-        String desiredFormat = "yyyy-MM-dd"; // Change this format as needed
+  @PostMapping("add")
+  @ApiOperation(value = "Api to add project")
+  public ResponseEntity<CommonApiResponse> addProject(@RequestBody Project project) {
 
-        // Create a DateTimeFormatter with the desired format
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(desiredFormat);
+    LOG.info("Recieved request for adding the project");
 
-        // Format the date to the desired format
-        String formattedTodaysDate = today.format(formatter);
-        
-        if(project == null) {
-			response.setSuccess(false);
-			response.setResponseMessage("bad request, missing project data");
-			return new ResponseEntity<CommonApiResponse>(response, HttpStatus.BAD_REQUEST);
-		}
-		
-		project.setAssignStatus(ProjectAssignStatus.NOT_ASSIGNED.value());
-		project.setStatus(ProjectAssignStatus.NOT_ASSIGNED_TO_MANAGER.value());
-		project.setCreatedDate(formattedTodaysDate);
-		
-		Project addedProduct = this.projectService.addProject(project);
-		
-		if (addedProduct != null) {
-			response.setSuccess(true);
-			response.setResponseMessage("Project Added Successfully");
-			return new ResponseEntity<CommonApiResponse>(response, HttpStatus.OK);
-		}
+    CommonApiResponse response = new CommonApiResponse();
 
-		else {
-			response.setSuccess(false);
-			response.setResponseMessage("Failed to add project");
-			return new ResponseEntity<CommonApiResponse>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
-	
-	@GetMapping("fetch")
-	@ApiOperation(value = "Api to fetch all projects")
-	public ResponseEntity<ProjectResponseDto> fetchAllProjects() {
-		LOG.info("Recieved request for Fetching all the projects");
+    // Get today's date
+    LocalDate today = LocalDate.now();
 
-		ProjectResponseDto response = new ProjectResponseDto();
-		
-		List<ProjectDto> projectDtos = new ArrayList<>(); 
-		
-        List<Project> projects = new ArrayList<>();
-        
-        projects = this.projectService.getAllProjects();
-        
-        if(projects == null) {
-        	response.setProjects(projectDtos);
-			response.setSuccess(true);
-			response.setResponseMessage("Projects fetched successful");
-			return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
-		}
-        
-        for(Project project : projects) {
-        	ProjectDto projectDto = new ProjectDto();
-        	projectDto.setId(project.getId());
-        	projectDto.setName(project.getName());
-        	projectDto.setDescription(project.getDescription());
-        	projectDto.setCreatedDate(project.getCreatedDate());
-        	projectDto.setRequirement(project.getRequirement());
-        	projectDto.setDeadlineDate(project.getDeadlineDate());
-        	projectDto.setProjectStatus(project.getStatus());
-        	
-        	if(project.getManagerId() == 0) {
-        		
-        		projectDto.setAssignedToManager(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setAssignedDate(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setManagerName(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setProjectStatus(ProjectAssignStatus.NOT_ASSIGNED_TO_MANAGER.value());
-        	    
-        	    projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    
-        	    projectDtos.add(projectDto);
-        	    
-        	    continue;
-        	}
-        	
-			else {
-				User manager = this.userService.getUserById(project.getManagerId());
+    // Define the desired format yyyy-mm-dd
+    String desiredFormat = "yyyy-MM-dd"; // Change this format as needed
 
-				projectDto.setManagerName(manager.getFirstName() + " " + manager.getLastName());
-				projectDto.setManagerId(manager.getId());
-				projectDto.setAssignedToManager(ProjectAssignStatus.ASSIGNED_TO_MANAGER.value());
-				projectDto.setAssignedDate(project.getAssignedDate());
+    // Create a DateTimeFormatter with the desired format
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(desiredFormat);
 
-			}
-        	
-        	if(project.getEmployeeId() == 0) {
-        		projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    
-        	    projectDtos.add(projectDto);
-        	    
-        	    continue;
-        	} 
-        	
-			else {
-				User employee = this.userService.getUserById(project.getEmployeeId());
+    // Format the date to the desired format
+    String formattedTodaysDate = today.format(formatter);
 
-				projectDto.setEmployeeName(employee.getFirstName() + " " + employee.getLastName());
-				projectDto.setAssignedToEmployee(ProjectAssignStatus.ASSIGNED_TO_EMPLOYEE.value());
+    if (project == null) {
+      response.setSuccess(false);
+      response.setResponseMessage("bad request, missing project data");
+      return new ResponseEntity<CommonApiResponse>(response, HttpStatus.BAD_REQUEST);
+    }
 
-				projectDtos.add(projectDto);
-			}
-        	
-        }
-        
-        response.setProjects(projectDtos);
-		response.setSuccess(true);
-		response.setResponseMessage("Projects fetched successful");
-		return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
+    project.setAssignStatus(ProjectAssignStatus.NOT_ASSIGNED.value());
+    project.setStatus(ProjectAssignStatus.NOT_ASSIGNED_TO_MANAGER.value());
+    project.setCreatedDate(formattedTodaysDate);
 
-	}
-	
-	@GetMapping("search")
-	@ApiOperation(value = "Api to fetch all projects by name")
-	public ResponseEntity<ProjectResponseDto> fetchAllProjectsByName(@RequestParam("projectName") String projectName) {
-		LOG.info("Recieved request for Fetch all projects by name");
-		
-		ProjectResponseDto response = new ProjectResponseDto();
+    Project addedProduct = this.projectService.addProject(project);
 
-		List<ProjectDto> projectDtos = new ArrayList<>(); 
-		
-        List<Project> projects = new ArrayList<>();
-        
-        projects = this.projectService.getAllProjectsByProjectName(projectName);
-        
-        if(projects == null) {
-        	response.setProjects(projectDtos);
-			response.setSuccess(true);
-			response.setResponseMessage("Projects fetched successful");
-			return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
-		}
-        
-        for(Project project : projects) {
-        	ProjectDto projectDto = new ProjectDto();
-        	projectDto.setId(project.getId());
-        	projectDto.setName(project.getName());
-        	projectDto.setDescription(project.getDescription());
-        	projectDto.setCreatedDate(project.getCreatedDate());
-        	projectDto.setRequirement(project.getRequirement());
-        	projectDto.setDeadlineDate(project.getDeadlineDate());
-        	projectDto.setProjectStatus(project.getStatus());
-        	
-        	if(project.getManagerId() == 0) {
-        		
-        		projectDto.setAssignedToManager(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setAssignedDate(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setManagerName(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setProjectStatus(ProjectAssignStatus.NOT_ASSIGNED_TO_MANAGER.value());
-        	    
-        	    projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    
-        	    projectDtos.add(projectDto);
-        	    
-        	    continue;
-        	}
-        	
-			else {
-				User manager = this.userService.getUserById(project.getManagerId());
+    if (addedProduct != null) {
+      response.setSuccess(true);
+      response.setResponseMessage("Project Added Successfully");
+      return new ResponseEntity<CommonApiResponse>(response, HttpStatus.OK);
+    } else {
+      response.setSuccess(false);
+      response.setResponseMessage("Failed to add project");
+      return new ResponseEntity<CommonApiResponse>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 
-				projectDto.setManagerName(manager.getFirstName() + " " + manager.getLastName());
-				projectDto.setManagerId(manager.getId());
-				projectDto.setAssignedToManager(ProjectAssignStatus.ASSIGNED_TO_MANAGER.value());
-				projectDto.setAssignedDate(project.getAssignedDate());
+  @GetMapping("fetch")
+  @ApiOperation(value = "Api to fetch all projects")
+  public ResponseEntity<ProjectResponseDto> fetchAllProjects() {
+    LOG.info("Recieved request for Fetching all the projects");
 
-			}
-        	
-        	if(project.getEmployeeId() == 0) {
-        		projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    
-        	    projectDtos.add(projectDto);
-        	    
-        	    continue;
-        	} 
-        	
-			else {
-				User employee = this.userService.getUserById(project.getEmployeeId());
+    ProjectResponseDto response = new ProjectResponseDto();
 
-				projectDto.setEmployeeName(employee.getFirstName() + " " + employee.getLastName());
-				projectDto.setAssignedToEmployee(ProjectAssignStatus.ASSIGNED_TO_EMPLOYEE.value());
+    List<ProjectDto> projectDtos = new ArrayList<>();
 
-				projectDtos.add(projectDto);
-			}
-        	
-        }
-        
-        response.setProjects(projectDtos);
-		response.setSuccess(true);
-		response.setResponseMessage("Projects fetched successful");
-		return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
+    List<Project> projects = new ArrayList<>();
 
-	}
-	
-	@GetMapping("search/id")
-	@ApiOperation(value = "Api to fetch all projects by id")
-	public ResponseEntity<ProjectResponseDto> fetchAllProjectsByName(@RequestParam("projectId") int projectId) {
-		LOG.info("Recieved request for Fetch project by id");
+    projects = this.projectService.getAllProjects();
 
-		ProjectResponseDto response = new ProjectResponseDto();
-		
-		List<ProjectDto> projectDtos = new ArrayList<>(); 
-		
-        List<Project> projects = new ArrayList<>();
-        
-        if(projectId == 0) {
-        	response.setProjects(projectDtos);
-			response.setSuccess(false);
-			response.setResponseMessage("Project not found using this Id");
-			return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
-		}
-        
-        Project p = this.projectService.getProjectById(projectId);
+    if (projects == null) {
+      response.setProjects(projectDtos);
+      response.setSuccess(true);
+      response.setResponseMessage("Projects fetched successful");
+      return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
+    }
 
-        if(p != null) {
-          projects.add(p);
-        }
-        
-        for(Project project : projects) {
-        	ProjectDto projectDto = new ProjectDto();
-        	projectDto.setId(project.getId());
-        	projectDto.setName(project.getName());
-        	projectDto.setDescription(project.getDescription());
-        	projectDto.setCreatedDate(project.getCreatedDate());
-        	projectDto.setRequirement(project.getRequirement());
-        	projectDto.setDeadlineDate(project.getDeadlineDate());
-        	projectDto.setProjectStatus(project.getStatus());
-        	
-        	if(project.getManagerId() == 0) {
-        		
-        		projectDto.setAssignedToManager(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setAssignedDate(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setManagerName(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setProjectStatus(ProjectAssignStatus.NOT_ASSIGNED_TO_MANAGER.value());
-        	    
-        	    projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    
-        	    projectDtos.add(projectDto);
-        	    
-        	    continue;
-        	}
-        	
-			else {
-				User manager = this.userService.getUserById(project.getManagerId());
+    for (Project project : projects) {
+      ProjectDto projectDto = new ProjectDto();
+      projectDto.setId(project.getId());
+      projectDto.setName(project.getName());
+      projectDto.setDescription(project.getDescription());
+      projectDto.setCreatedDate(project.getCreatedDate());
+      projectDto.setRequirement(project.getRequirement());
+      projectDto.setDeadlineDate(project.getDeadlineDate());
+      projectDto.setProjectStatus(project.getStatus());
 
-				projectDto.setManagerName(manager.getFirstName() + " " + manager.getLastName());
-				projectDto.setManagerId(manager.getId());
-				projectDto.setAssignedToManager(ProjectAssignStatus.ASSIGNED_TO_MANAGER.value());
-				projectDto.setAssignedDate(project.getAssignedDate());
+      if (project.getManagerId() == 0) {
 
-			}
-        	
-        	if(project.getEmployeeId() == 0) {
-        		projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    
-        	    projectDtos.add(projectDto);
-        	    
-        	    continue;
-        	} 
-        	
-			else {
-				User employee = this.userService.getUserById(project.getEmployeeId());
+        projectDto.setAssignedToManager(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setAssignedDate(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setManagerName(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setProjectStatus(ProjectAssignStatus.NOT_ASSIGNED_TO_MANAGER.value());
 
-				projectDto.setEmployeeName(employee.getFirstName() + " " + employee.getLastName());
-				projectDto.setAssignedToEmployee(ProjectAssignStatus.ASSIGNED_TO_EMPLOYEE.value());
+        projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
 
-				projectDtos.add(projectDto);
-			}
-        	
-        }
-        
-        response.setProjects(projectDtos);
-		response.setSuccess(true);
-		response.setResponseMessage("Projects fetched successful");
-		return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
+        projectDtos.add(projectDto);
 
-	}
-	
-	@PostMapping("update")
-	@ApiOperation(value = "Api to update the project status")
-	public ResponseEntity<CommonApiResponse> updateProject(@RequestBody UpdateProjectRequestDto updateProjectRequest) {
-		
-		LOG.info("Recieved request for updating the project");
+        continue;
+      } else {
+        User manager = this.userService.getUserById(project.getManagerId());
 
-		CommonApiResponse response = new CommonApiResponse();
-		
-		if(updateProjectRequest == null) {
-			response.setSuccess(false);
-			response.setResponseMessage("request data is missing");
-			return new ResponseEntity<CommonApiResponse>(response, HttpStatus.BAD_REQUEST);
-		}
+        projectDto.setManagerName(manager.getFirstName() + " " + manager.getLastName());
+        projectDto.setManagerId(manager.getId());
+        projectDto.setAssignedToManager(ProjectAssignStatus.ASSIGNED_TO_MANAGER.value());
+        projectDto.setAssignedDate(project.getAssignedDate());
+      }
 
-		 // Get today's date
-        LocalDate today = LocalDate.now();
-        String desiredFormat = "yyyy-MM-dd";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(desiredFormat);
-        String formattedTodaysDate = today.format(formatter);
-		
-		Project project = this.projectService.getProjectById(updateProjectRequest.getProjectId());
-		if (project == null) {
-			response.setSuccess(false);
-			response.setResponseMessage("project not found");
-			return new ResponseEntity<CommonApiResponse>(response, HttpStatus.NOT_FOUND);
-		}
+      if (project.getEmployeeId() == 0) {
+        projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
 
-		// admin is assigning the project to manager
-		if (updateProjectRequest.getManagerId() != 0) {
-			
-			User manager = this.userService.getUserById(updateProjectRequest.getManagerId());
-			
-			if(manager == null || !manager.getRole().equals(UserRole.MANAGER.value())) {
-				response.setSuccess(false);
-				response.setResponseMessage("failed to assign the project to manager");
-				return new ResponseEntity<CommonApiResponse>(response, HttpStatus.BAD_REQUEST);
-			}
-			
-			project.setManagerId(manager.getId());
-			project.setAssignedDate(formattedTodaysDate);
-			project.setStatus(ProjectAssignStatus.NOT_ASSIGNED_TO_EMPLOYEE.value());
-			
-			Project updatedProject = this.projectService.updateProject(project);
-			
-			if(updatedProject == null) {
-				response.setSuccess(false);
-				response.setResponseMessage("failed to update the project status");
-				return new ResponseEntity<CommonApiResponse>(response, HttpStatus.BAD_REQUEST);
-			} else {
-				response.setSuccess(true);
-				response.setResponseMessage("assigned project to manager successfully");
-				return new ResponseEntity<CommonApiResponse>(response, HttpStatus.OK);
-			}
+        projectDtos.add(projectDto);
 
-		}
+        continue;
+      } else {
+        User employee = this.userService.getUserById(project.getEmployeeId());
 
-		// admin is assigning the project to employee
-		if (updateProjectRequest.getEmployeeId() != 0) {
-            User employee = this.userService.getUserById(updateProjectRequest.getEmployeeId());
-			
-			if(employee == null || !employee.getRole().equals(UserRole.EMPLOYEE.value())) {
-				response.setSuccess(false);
-				response.setResponseMessage("failed to assign the project to employee");
-				return new ResponseEntity<CommonApiResponse>(response, HttpStatus.BAD_REQUEST);
-			}
-			
-			project.setEmployeeId(employee.getId());
-			project.setStatus(ProjectStatus.PENDING.value());
-			
-			Project updatedProject = this.projectService.updateProject(project);
-			
-			if(updatedProject == null) {
-				response.setSuccess(false);
-				response.setResponseMessage("failed to assign the project to employee");
-				return new ResponseEntity<CommonApiResponse>(response, HttpStatus.BAD_REQUEST);
-			} else {
-				response.setSuccess(true);
-				response.setResponseMessage("assigned project to employee successfully");
-				return new ResponseEntity<CommonApiResponse>(response, HttpStatus.OK);
-			}
+        projectDto.setEmployeeName(employee.getFirstName() + " " + employee.getLastName());
+        projectDto.setAssignedToEmployee(ProjectAssignStatus.ASSIGNED_TO_EMPLOYEE.value());
 
-		}
-		
-		// employee is updating the project status
-		if(updateProjectRequest.getProjectStatus() != null && !StringUtils.isEmpty(updateProjectRequest.getProjectStatus())) {
-			
-			project.setStatus(updateProjectRequest.getProjectStatus());
-			
-			Project updatedProject = this.projectService.updateProject(project);
-			
-			if(updatedProject == null) {
-				response.setSuccess(false);
-				response.setResponseMessage("failed to update the project status");
-				return new ResponseEntity<CommonApiResponse>(response, HttpStatus.BAD_REQUEST);
-			} else {
-				response.setSuccess(true);
-				response.setResponseMessage("project status updated successfully");
-				return new ResponseEntity<CommonApiResponse>(response, HttpStatus.OK);
-			}
-		}
-		
-		response.setSuccess(false);
-		response.setResponseMessage("no project update action was provided");
-		return new ResponseEntity<CommonApiResponse>(response, HttpStatus.BAD_REQUEST);
-	
-	}
-	
-	@GetMapping("fetch/manager")
-	@ApiOperation(value = "Api to fetch all projects by manager id")
-	public ResponseEntity<ProjectResponseDto> fetchAllProjectsByManagerId(@RequestParam("managerId") int managerId) {
-		LOG.info("Recieved request for Fetch projects by using manager Id");
+        projectDtos.add(projectDto);
+      }
+    }
 
-		ProjectResponseDto response = new ProjectResponseDto();
-		
-		List<ProjectDto> projectDtos = new ArrayList<>(); 
-		
-        List<Project> projects = new ArrayList<>();
-        
-        projects = this.projectService.getAllProjectsByManagerId(managerId);
-        
-        if(projects == null) {
-        	response.setProjects(projectDtos);
-			response.setSuccess(true);
-			response.setResponseMessage("Projects fetched successful");
-			return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
-		}
-        
-        for(Project project : projects) {
-        	ProjectDto projectDto = new ProjectDto();
-        	projectDto.setId(project.getId());
-        	projectDto.setName(project.getName());
-        	projectDto.setDescription(project.getDescription());
-        	projectDto.setCreatedDate(project.getCreatedDate());
-        	projectDto.setRequirement(project.getRequirement());
-        	projectDto.setDeadlineDate(project.getDeadlineDate());
-        	projectDto.setProjectStatus(project.getStatus());
-        	
-        	if(project.getManagerId() == 0) {
-        		
-        		projectDto.setAssignedToManager(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setAssignedDate(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setManagerName(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setProjectStatus(ProjectAssignStatus.NOT_ASSIGNED_TO_MANAGER.value());
-        	    
-        	    projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    
-        	    projectDtos.add(projectDto);
-        	    
-        	    continue;
-        	}
-        	
-			else {
-				User manager = this.userService.getUserById(project.getManagerId());
+    response.setProjects(projectDtos);
+    response.setSuccess(true);
+    response.setResponseMessage("Projects fetched successful");
+    return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
+  }
 
-				projectDto.setManagerName(manager.getFirstName() + " " + manager.getLastName());
-				projectDto.setManagerId(manager.getId());
-				projectDto.setAssignedToManager(ProjectAssignStatus.ASSIGNED_TO_MANAGER.value());
-				projectDto.setAssignedDate(project.getAssignedDate());
+  @GetMapping("search")
+  @ApiOperation(value = "Api to fetch all projects by name")
+  public ResponseEntity<ProjectResponseDto> fetchAllProjectsByName(
+      @RequestParam("projectName") String projectName) {
+    LOG.info("Recieved request for Fetch all projects by name");
 
-			}
-        	
-        	if(project.getEmployeeId() == 0) {
-        		projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    
-        	    projectDtos.add(projectDto);
-        	    
-        	    continue;
-			}
+    ProjectResponseDto response = new ProjectResponseDto();
 
-			else {
-				User employee = this.userService.getUserById(project.getEmployeeId());
+    List<ProjectDto> projectDtos = new ArrayList<>();
 
-				projectDto.setEmployeeName(employee.getFirstName() + " " + employee.getLastName());
-				projectDto.setAssignedToEmployee(ProjectAssignStatus.ASSIGNED_TO_EMPLOYEE.value());
+    List<Project> projects = new ArrayList<>();
 
-				projectDtos.add(projectDto);
-			}
+    projects = this.projectService.getAllProjectsByProjectName(projectName);
 
-		}
+    if (projects == null) {
+      response.setProjects(projectDtos);
+      response.setSuccess(true);
+      response.setResponseMessage("Projects fetched successful");
+      return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
+    }
 
-		response.setProjects(projectDtos);
-		response.setSuccess(true);
-		response.setResponseMessage("Projects fetched successful");
-		return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
-		
+    for (Project project : projects) {
+      ProjectDto projectDto = new ProjectDto();
+      projectDto.setId(project.getId());
+      projectDto.setName(project.getName());
+      projectDto.setDescription(project.getDescription());
+      projectDto.setCreatedDate(project.getCreatedDate());
+      projectDto.setRequirement(project.getRequirement());
+      projectDto.setDeadlineDate(project.getDeadlineDate());
+      projectDto.setProjectStatus(project.getStatus());
 
-	}
-	
-	@GetMapping("fetch/employee")
-	@ApiOperation(value = "Api to fetch all projects by manager id")
-	public ResponseEntity<ProjectResponseDto> fetchAllProjectsByEmployeeId(@RequestParam("employeeId") int employeeId) {
-		LOG.info("Recieved request for Fetch projects by using employee Id");
+      if (project.getManagerId() == 0) {
 
-		ProjectResponseDto response = new ProjectResponseDto();
+        projectDto.setAssignedToManager(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setAssignedDate(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setManagerName(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setProjectStatus(ProjectAssignStatus.NOT_ASSIGNED_TO_MANAGER.value());
 
-		List<ProjectDto> projectDtos = new ArrayList<>(); 
-		
-        List<Project> projects = new ArrayList<>();
-        
-        projects = this.projectService.getAllProjectsByEmployeeId(employeeId);
-        
-        if(projects == null) {
-        	response.setProjects(projectDtos);
-			response.setSuccess(true);
-			response.setResponseMessage("Projects fetched successful");
-			return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
-		}
-        
-        for(Project project : projects) {
-        	ProjectDto projectDto = new ProjectDto();
-        	projectDto.setId(project.getId());
-        	projectDto.setName(project.getName());
-        	projectDto.setDescription(project.getDescription());
-        	projectDto.setCreatedDate(project.getCreatedDate());
-        	projectDto.setRequirement(project.getRequirement());
-        	projectDto.setDeadlineDate(project.getDeadlineDate());
-        	projectDto.setProjectStatus(project.getStatus());
-        	
-        	if(project.getManagerId() == 0) {
-        		
-        		projectDto.setAssignedToManager(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setAssignedDate(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setManagerName(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setProjectStatus(ProjectAssignStatus.NOT_ASSIGNED_TO_MANAGER.value());
-        	    
-        	    projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    
-        	    projectDtos.add(projectDto);
-        	    
-        	    continue;
-        	}
-        	
-			else {
-				User manager = this.userService.getUserById(project.getManagerId());
+        projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
 
-				projectDto.setManagerName(manager.getFirstName() + " " + manager.getLastName());
-				projectDto.setManagerId(manager.getId());
-				projectDto.setAssignedToManager(ProjectAssignStatus.ASSIGNED_TO_MANAGER.value());
-				projectDto.setAssignedDate(project.getAssignedDate());
+        projectDtos.add(projectDto);
 
-			}
-        	
-        	if(project.getEmployeeId() == 0) {
-        		projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    
-        	    projectDtos.add(projectDto);
-        	    
-        	    continue;
-        	} 
-        	
-			else {
-				User employee = this.userService.getUserById(project.getEmployeeId());
+        continue;
+      } else {
+        User manager = this.userService.getUserById(project.getManagerId());
 
-				projectDto.setEmployeeName(employee.getFirstName() + " " + employee.getLastName());
-				projectDto.setAssignedToEmployee(ProjectAssignStatus.ASSIGNED_TO_EMPLOYEE.value());
+        projectDto.setManagerName(manager.getFirstName() + " " + manager.getLastName());
+        projectDto.setManagerId(manager.getId());
+        projectDto.setAssignedToManager(ProjectAssignStatus.ASSIGNED_TO_MANAGER.value());
+        projectDto.setAssignedDate(project.getAssignedDate());
+      }
 
-				projectDtos.add(projectDto);
-			}
-        	
-        }
-        
-        response.setProjects(projectDtos);
-		response.setSuccess(true);
-		response.setResponseMessage("Projects fetched successful");
-		return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
+      if (project.getEmployeeId() == 0) {
+        projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
 
-	}
-	
-	@GetMapping("manager/search")
-	@ApiOperation(value = "Api to fetch all projects by name")
-	public ResponseEntity<ProjectResponseDto> fetchAllProjectsByNameAndManger(@RequestParam("projectName") String projectName, @RequestParam("managerId") int managerId) {
-		LOG.info("Recieved request for searching the project by using project name and manager id");
+        projectDtos.add(projectDto);
 
-		ProjectResponseDto response = new ProjectResponseDto();
-		List<ProjectDto> projectDtos = new ArrayList<>(); 
-		
-		if(projectName == null || managerId == 0) {
-			response.setProjects(projectDtos);
-			response.setSuccess(false);
-			response.setResponseMessage("bad request, request data is missing");
-			return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.BAD_REQUEST);
-		}
-		
-        List<Project> projects = new ArrayList<>();
-        
-        projects = this.projectService.getAllProjectsByProjectNameAndManagerId(projectName, managerId);
-        
-        if(projects == null) {
-        	response.setProjects(projectDtos);
-			response.setSuccess(true);
-			response.setResponseMessage("Projects fetched successful");
-			return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
-		}
-        
-        for(Project project : projects) {
-        	ProjectDto projectDto = new ProjectDto();
-        	projectDto.setId(project.getId());
-        	projectDto.setName(project.getName());
-        	projectDto.setDescription(project.getDescription());
-        	projectDto.setCreatedDate(project.getCreatedDate());
-        	projectDto.setRequirement(project.getRequirement());
-        	projectDto.setDeadlineDate(project.getDeadlineDate());
-        	projectDto.setProjectStatus(project.getStatus());
-        	
-        	if(project.getManagerId() == 0) {
-        		
-        		projectDto.setAssignedToManager(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setAssignedDate(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setManagerName(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setProjectStatus(ProjectAssignStatus.NOT_ASSIGNED_TO_MANAGER.value());
-        	    
-        	    projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    
-        	    projectDtos.add(projectDto);
-        	    
-        	    continue;
-        	}
-        	
-			else {
-				User manager = this.userService.getUserById(project.getManagerId());
+        continue;
+      } else {
+        User employee = this.userService.getUserById(project.getEmployeeId());
 
-				projectDto.setManagerName(manager.getFirstName() + " " + manager.getLastName());
-				projectDto.setManagerId(manager.getId());
-				projectDto.setAssignedToManager(ProjectAssignStatus.ASSIGNED_TO_MANAGER.value());
-				projectDto.setAssignedDate(project.getAssignedDate());
+        projectDto.setEmployeeName(employee.getFirstName() + " " + employee.getLastName());
+        projectDto.setAssignedToEmployee(ProjectAssignStatus.ASSIGNED_TO_EMPLOYEE.value());
 
-			}
-        	
-        	if(project.getEmployeeId() == 0) {
-        		projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    
-        	    projectDtos.add(projectDto);
-        	    
-        	    continue;
-        	} 
-        	
-			else {
-				User employee = this.userService.getUserById(project.getEmployeeId());
+        projectDtos.add(projectDto);
+      }
+    }
 
-				projectDto.setEmployeeName(employee.getFirstName() + " " + employee.getLastName());
-				projectDto.setAssignedToEmployee(ProjectAssignStatus.ASSIGNED_TO_EMPLOYEE.value());
+    response.setProjects(projectDtos);
+    response.setSuccess(true);
+    response.setResponseMessage("Projects fetched successful");
+    return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
+  }
 
-				projectDtos.add(projectDto);
-			}
-        	
-        }
-        
-        response.setProjects(projectDtos);
-		response.setSuccess(true);
-		response.setResponseMessage("Projects fetched successful");
-		return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
+  @GetMapping("search/id")
+  @ApiOperation(value = "Api to fetch all projects by id")
+  public ResponseEntity<ProjectResponseDto> fetchAllProjectsByName(
+      @RequestParam("projectId") int projectId) {
+    LOG.info("Recieved request for Fetch project by id");
 
-	}
-	
-	@GetMapping("employee/search")
-	@ApiOperation(value = "Api to fetch all projects by name")
-	public ResponseEntity<ProjectResponseDto> fetchAllProjectsByNameAndEmployee(@RequestParam("projectName") String projectName, @RequestParam("employeeId") int employeeId) {
-		LOG.info("Recieved request for searching the project by using project name and manager id");
+    ProjectResponseDto response = new ProjectResponseDto();
 
-		ProjectResponseDto response = new ProjectResponseDto();
+    List<ProjectDto> projectDtos = new ArrayList<>();
 
-		List<ProjectDto> projectDtos = new ArrayList<>(); 
-		
-		if(projectName == null || employeeId == 0) {
-			response.setProjects(projectDtos);
-			response.setSuccess(false);
-			response.setResponseMessage("bad request, request data is missing");
-			return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.BAD_REQUEST);
-		}
-		
-        List<Project> projects = new ArrayList<>();
-        
-        projects = this.projectService.getAllProjectsByProjectNameAndEmployeeId(projectName, employeeId);
-        
-        if(projects == null) {
-        	response.setProjects(projectDtos);
-			response.setSuccess(true);
-			response.setResponseMessage("Projects fetched successful");
-			return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
-		}
-        
-        for(Project project : projects) {
-        	ProjectDto projectDto = new ProjectDto();
-        	projectDto.setId(project.getId());
-        	projectDto.setName(project.getName());
-        	projectDto.setDescription(project.getDescription());
-        	projectDto.setCreatedDate(project.getCreatedDate());
-        	projectDto.setRequirement(project.getRequirement());
-        	projectDto.setDeadlineDate(project.getDeadlineDate());
-        	projectDto.setProjectStatus(project.getStatus());
-        	
-        	if(project.getManagerId() == 0) {
-        		
-        		projectDto.setAssignedToManager(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setAssignedDate(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setManagerName(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setProjectStatus(ProjectAssignStatus.NOT_ASSIGNED_TO_MANAGER.value());
-        	    
-        	    projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    
-        	    projectDtos.add(projectDto);
-        	    
-        	    continue;
-        	}
-        	
-			else {
-				User manager = this.userService.getUserById(project.getManagerId());
+    List<Project> projects = new ArrayList<>();
 
-				projectDto.setManagerName(manager.getFirstName() + " " + manager.getLastName());
-				projectDto.setManagerId(manager.getId());
-				projectDto.setAssignedToManager(ProjectAssignStatus.ASSIGNED_TO_MANAGER.value());
-				projectDto.setAssignedDate(project.getAssignedDate());
+    if (projectId == 0) {
+      response.setProjects(projectDtos);
+      response.setSuccess(false);
+      response.setResponseMessage("Project not found using this Id");
+      return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
+    }
 
-			}
-        	
-        	if(project.getEmployeeId() == 0) {
-        		projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
-        	    
-        	    projectDtos.add(projectDto);
-        	    
-        	    continue;
-        	} 
-        	
-			else {
-				User employee = this.userService.getUserById(project.getEmployeeId());
+    Project p = this.projectService.getProjectById(projectId);
 
-				projectDto.setEmployeeName(employee.getFirstName() + " " + employee.getLastName());
-				projectDto.setAssignedToEmployee(ProjectAssignStatus.ASSIGNED_TO_EMPLOYEE.value());
+    if (p != null) {
+      projects.add(p);
+    }
 
-				projectDtos.add(projectDto);
-			}
-        	
-        }
-        
-        response.setProjects(projectDtos);
-		response.setSuccess(true);
-		response.setResponseMessage("Projects fetched successful");
-		return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
+    for (Project project : projects) {
+      ProjectDto projectDto = new ProjectDto();
+      projectDto.setId(project.getId());
+      projectDto.setName(project.getName());
+      projectDto.setDescription(project.getDescription());
+      projectDto.setCreatedDate(project.getCreatedDate());
+      projectDto.setRequirement(project.getRequirement());
+      projectDto.setDeadlineDate(project.getDeadlineDate());
+      projectDto.setProjectStatus(project.getStatus());
 
-	}
-	
-	@GetMapping("allStatus")
-	@ApiOperation(value = "Api to fetch all projects by name")
-	public ResponseEntity<List<String>> fetchAllProjectStatus() {
-		LOG.info("Recieved request for Fecth all the project status");
+      if (project.getManagerId() == 0) {
 
-        List<String> allStatus = new ArrayList<>();
-        
-        for(ProjectStatus status : ProjectStatus.values()) {
-        	allStatus.add(status.value());
-        }
-		
-		return new ResponseEntity<List<String>>(allStatus, HttpStatus.OK);
+        projectDto.setAssignedToManager(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setAssignedDate(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setManagerName(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setProjectStatus(ProjectAssignStatus.NOT_ASSIGNED_TO_MANAGER.value());
 
-	}
-	
+        projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
+
+        projectDtos.add(projectDto);
+
+        continue;
+      } else {
+        User manager = this.userService.getUserById(project.getManagerId());
+
+        projectDto.setManagerName(manager.getFirstName() + " " + manager.getLastName());
+        projectDto.setManagerId(manager.getId());
+        projectDto.setAssignedToManager(ProjectAssignStatus.ASSIGNED_TO_MANAGER.value());
+        projectDto.setAssignedDate(project.getAssignedDate());
+      }
+
+      if (project.getEmployeeId() == 0) {
+        projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
+
+        projectDtos.add(projectDto);
+
+        continue;
+      } else {
+        User employee = this.userService.getUserById(project.getEmployeeId());
+
+        projectDto.setEmployeeName(employee.getFirstName() + " " + employee.getLastName());
+        projectDto.setAssignedToEmployee(ProjectAssignStatus.ASSIGNED_TO_EMPLOYEE.value());
+
+        projectDtos.add(projectDto);
+      }
+    }
+
+    response.setProjects(projectDtos);
+    response.setSuccess(true);
+    response.setResponseMessage("Projects fetched successful");
+    return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
+  }
+
+  @PostMapping("update")
+  @ApiOperation(value = "Api to update the project status")
+  public ResponseEntity<CommonApiResponse> updateProject(
+      @RequestBody UpdateProjectRequestDto updateProjectRequest) {
+
+    LOG.info("Recieved request for updating the project");
+
+    CommonApiResponse response = new CommonApiResponse();
+
+    if (updateProjectRequest == null) {
+      response.setSuccess(false);
+      response.setResponseMessage("request data is missing");
+      return new ResponseEntity<CommonApiResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    // Get today's date
+    LocalDate today = LocalDate.now();
+    String desiredFormat = "yyyy-MM-dd";
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(desiredFormat);
+    String formattedTodaysDate = today.format(formatter);
+
+    Project project = this.projectService.getProjectById(updateProjectRequest.getProjectId());
+    if (project == null) {
+      response.setSuccess(false);
+      response.setResponseMessage("project not found");
+      return new ResponseEntity<CommonApiResponse>(response, HttpStatus.NOT_FOUND);
+    }
+
+    // admin is assigning the project to manager
+    if (updateProjectRequest.getManagerId() != 0) {
+
+      User manager = this.userService.getUserById(updateProjectRequest.getManagerId());
+
+      if (manager == null || !manager.getRole().equals(UserRole.MANAGER.value())) {
+        response.setSuccess(false);
+        response.setResponseMessage("failed to assign the project to manager");
+        return new ResponseEntity<CommonApiResponse>(response, HttpStatus.BAD_REQUEST);
+      }
+
+      project.setManagerId(manager.getId());
+      project.setAssignedDate(formattedTodaysDate);
+      project.setStatus(ProjectAssignStatus.NOT_ASSIGNED_TO_EMPLOYEE.value());
+
+      Project updatedProject = this.projectService.updateProject(project);
+
+      if (updatedProject == null) {
+        response.setSuccess(false);
+        response.setResponseMessage("failed to update the project status");
+        return new ResponseEntity<CommonApiResponse>(response, HttpStatus.BAD_REQUEST);
+      } else {
+        response.setSuccess(true);
+        response.setResponseMessage("assigned project to manager successfully");
+        return new ResponseEntity<CommonApiResponse>(response, HttpStatus.OK);
+      }
+    }
+
+    // admin is assigning the project to employee
+    if (updateProjectRequest.getEmployeeId() != 0) {
+      User employee = this.userService.getUserById(updateProjectRequest.getEmployeeId());
+
+      if (employee == null || !employee.getRole().equals(UserRole.EMPLOYEE.value())) {
+        response.setSuccess(false);
+        response.setResponseMessage("failed to assign the project to employee");
+        return new ResponseEntity<CommonApiResponse>(response, HttpStatus.BAD_REQUEST);
+      }
+
+      project.setEmployeeId(employee.getId());
+      project.setStatus(ProjectStatus.PENDING.value());
+
+      Project updatedProject = this.projectService.updateProject(project);
+
+      if (updatedProject == null) {
+        response.setSuccess(false);
+        response.setResponseMessage("failed to assign the project to employee");
+        return new ResponseEntity<CommonApiResponse>(response, HttpStatus.BAD_REQUEST);
+      } else {
+        response.setSuccess(true);
+        response.setResponseMessage("assigned project to employee successfully");
+        return new ResponseEntity<CommonApiResponse>(response, HttpStatus.OK);
+      }
+    }
+
+    // employee is updating the project status
+    if (updateProjectRequest.getProjectStatus() != null
+        && !StringUtils.isEmpty(updateProjectRequest.getProjectStatus())) {
+
+      project.setStatus(updateProjectRequest.getProjectStatus());
+
+      Project updatedProject = this.projectService.updateProject(project);
+
+      if (updatedProject == null) {
+        response.setSuccess(false);
+        response.setResponseMessage("failed to update the project status");
+        return new ResponseEntity<CommonApiResponse>(response, HttpStatus.BAD_REQUEST);
+      } else {
+        response.setSuccess(true);
+        response.setResponseMessage("project status updated successfully");
+        return new ResponseEntity<CommonApiResponse>(response, HttpStatus.OK);
+      }
+    }
+
+    response.setSuccess(false);
+    response.setResponseMessage("no project update action was provided");
+    return new ResponseEntity<CommonApiResponse>(response, HttpStatus.BAD_REQUEST);
+  }
+
+  @GetMapping("fetch/manager")
+  @ApiOperation(value = "Api to fetch all projects by manager id")
+  public ResponseEntity<ProjectResponseDto> fetchAllProjectsByManagerId(
+      @RequestParam("managerId") int managerId) {
+    LOG.info("Recieved request for Fetch projects by using manager Id");
+
+    ProjectResponseDto response = new ProjectResponseDto();
+
+    List<ProjectDto> projectDtos = new ArrayList<>();
+
+    List<Project> projects = new ArrayList<>();
+
+    projects = this.projectService.getAllProjectsByManagerId(managerId);
+
+    if (projects == null) {
+      response.setProjects(projectDtos);
+      response.setSuccess(true);
+      response.setResponseMessage("Projects fetched successful");
+      return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
+    }
+
+    for (Project project : projects) {
+      ProjectDto projectDto = new ProjectDto();
+      projectDto.setId(project.getId());
+      projectDto.setName(project.getName());
+      projectDto.setDescription(project.getDescription());
+      projectDto.setCreatedDate(project.getCreatedDate());
+      projectDto.setRequirement(project.getRequirement());
+      projectDto.setDeadlineDate(project.getDeadlineDate());
+      projectDto.setProjectStatus(project.getStatus());
+
+      if (project.getManagerId() == 0) {
+
+        projectDto.setAssignedToManager(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setAssignedDate(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setManagerName(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setProjectStatus(ProjectAssignStatus.NOT_ASSIGNED_TO_MANAGER.value());
+
+        projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
+
+        projectDtos.add(projectDto);
+
+        continue;
+      } else {
+        User manager = this.userService.getUserById(project.getManagerId());
+
+        projectDto.setManagerName(manager.getFirstName() + " " + manager.getLastName());
+        projectDto.setManagerId(manager.getId());
+        projectDto.setAssignedToManager(ProjectAssignStatus.ASSIGNED_TO_MANAGER.value());
+        projectDto.setAssignedDate(project.getAssignedDate());
+      }
+
+      if (project.getEmployeeId() == 0) {
+        projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
+
+        projectDtos.add(projectDto);
+
+        continue;
+      } else {
+        User employee = this.userService.getUserById(project.getEmployeeId());
+
+        projectDto.setEmployeeName(employee.getFirstName() + " " + employee.getLastName());
+        projectDto.setAssignedToEmployee(ProjectAssignStatus.ASSIGNED_TO_EMPLOYEE.value());
+
+        projectDtos.add(projectDto);
+      }
+    }
+
+    response.setProjects(projectDtos);
+    response.setSuccess(true);
+    response.setResponseMessage("Projects fetched successful");
+    return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
+  }
+
+  @GetMapping("fetch/employee")
+  @ApiOperation(value = "Api to fetch all projects by manager id")
+  public ResponseEntity<ProjectResponseDto> fetchAllProjectsByEmployeeId(
+      @RequestParam("employeeId") int employeeId) {
+    LOG.info("Recieved request for Fetch projects by using employee Id");
+
+    ProjectResponseDto response = new ProjectResponseDto();
+
+    List<ProjectDto> projectDtos = new ArrayList<>();
+
+    List<Project> projects = new ArrayList<>();
+
+    projects = this.projectService.getAllProjectsByEmployeeId(employeeId);
+
+    if (projects == null) {
+      response.setProjects(projectDtos);
+      response.setSuccess(true);
+      response.setResponseMessage("Projects fetched successful");
+      return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
+    }
+
+    for (Project project : projects) {
+      ProjectDto projectDto = new ProjectDto();
+      projectDto.setId(project.getId());
+      projectDto.setName(project.getName());
+      projectDto.setDescription(project.getDescription());
+      projectDto.setCreatedDate(project.getCreatedDate());
+      projectDto.setRequirement(project.getRequirement());
+      projectDto.setDeadlineDate(project.getDeadlineDate());
+      projectDto.setProjectStatus(project.getStatus());
+
+      if (project.getManagerId() == 0) {
+
+        projectDto.setAssignedToManager(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setAssignedDate(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setManagerName(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setProjectStatus(ProjectAssignStatus.NOT_ASSIGNED_TO_MANAGER.value());
+
+        projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
+
+        projectDtos.add(projectDto);
+
+        continue;
+      } else {
+        User manager = this.userService.getUserById(project.getManagerId());
+
+        projectDto.setManagerName(manager.getFirstName() + " " + manager.getLastName());
+        projectDto.setManagerId(manager.getId());
+        projectDto.setAssignedToManager(ProjectAssignStatus.ASSIGNED_TO_MANAGER.value());
+        projectDto.setAssignedDate(project.getAssignedDate());
+      }
+
+      if (project.getEmployeeId() == 0) {
+        projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
+
+        projectDtos.add(projectDto);
+
+        continue;
+      } else {
+        User employee = this.userService.getUserById(project.getEmployeeId());
+
+        projectDto.setEmployeeName(employee.getFirstName() + " " + employee.getLastName());
+        projectDto.setAssignedToEmployee(ProjectAssignStatus.ASSIGNED_TO_EMPLOYEE.value());
+
+        projectDtos.add(projectDto);
+      }
+    }
+
+    response.setProjects(projectDtos);
+    response.setSuccess(true);
+    response.setResponseMessage("Projects fetched successful");
+    return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
+  }
+
+  @GetMapping("manager/search")
+  @ApiOperation(value = "Api to fetch all projects by name")
+  public ResponseEntity<ProjectResponseDto> fetchAllProjectsByNameAndManger(
+      @RequestParam("projectName") String projectName, @RequestParam("managerId") int managerId) {
+    LOG.info("Recieved request for searching the project by using project name and manager id");
+
+    ProjectResponseDto response = new ProjectResponseDto();
+    List<ProjectDto> projectDtos = new ArrayList<>();
+
+    if (projectName == null || managerId == 0) {
+      response.setProjects(projectDtos);
+      response.setSuccess(false);
+      response.setResponseMessage("bad request, request data is missing");
+      return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    List<Project> projects = new ArrayList<>();
+
+    projects = this.projectService.getAllProjectsByProjectNameAndManagerId(projectName, managerId);
+
+    if (projects == null) {
+      response.setProjects(projectDtos);
+      response.setSuccess(true);
+      response.setResponseMessage("Projects fetched successful");
+      return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
+    }
+
+    for (Project project : projects) {
+      ProjectDto projectDto = new ProjectDto();
+      projectDto.setId(project.getId());
+      projectDto.setName(project.getName());
+      projectDto.setDescription(project.getDescription());
+      projectDto.setCreatedDate(project.getCreatedDate());
+      projectDto.setRequirement(project.getRequirement());
+      projectDto.setDeadlineDate(project.getDeadlineDate());
+      projectDto.setProjectStatus(project.getStatus());
+
+      if (project.getManagerId() == 0) {
+
+        projectDto.setAssignedToManager(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setAssignedDate(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setManagerName(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setProjectStatus(ProjectAssignStatus.NOT_ASSIGNED_TO_MANAGER.value());
+
+        projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
+
+        projectDtos.add(projectDto);
+
+        continue;
+      } else {
+        User manager = this.userService.getUserById(project.getManagerId());
+
+        projectDto.setManagerName(manager.getFirstName() + " " + manager.getLastName());
+        projectDto.setManagerId(manager.getId());
+        projectDto.setAssignedToManager(ProjectAssignStatus.ASSIGNED_TO_MANAGER.value());
+        projectDto.setAssignedDate(project.getAssignedDate());
+      }
+
+      if (project.getEmployeeId() == 0) {
+        projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
+
+        projectDtos.add(projectDto);
+
+        continue;
+      } else {
+        User employee = this.userService.getUserById(project.getEmployeeId());
+
+        projectDto.setEmployeeName(employee.getFirstName() + " " + employee.getLastName());
+        projectDto.setAssignedToEmployee(ProjectAssignStatus.ASSIGNED_TO_EMPLOYEE.value());
+
+        projectDtos.add(projectDto);
+      }
+    }
+
+    response.setProjects(projectDtos);
+    response.setSuccess(true);
+    response.setResponseMessage("Projects fetched successful");
+    return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
+  }
+
+  @GetMapping("employee/search")
+  @ApiOperation(value = "Api to fetch all projects by name")
+  public ResponseEntity<ProjectResponseDto> fetchAllProjectsByNameAndEmployee(
+      @RequestParam("projectName") String projectName, @RequestParam("employeeId") int employeeId) {
+    LOG.info("Recieved request for searching the project by using project name and manager id");
+
+    ProjectResponseDto response = new ProjectResponseDto();
+
+    List<ProjectDto> projectDtos = new ArrayList<>();
+
+    if (projectName == null || employeeId == 0) {
+      response.setProjects(projectDtos);
+      response.setSuccess(false);
+      response.setResponseMessage("bad request, request data is missing");
+      return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    List<Project> projects = new ArrayList<>();
+
+    projects =
+        this.projectService.getAllProjectsByProjectNameAndEmployeeId(projectName, employeeId);
+
+    if (projects == null) {
+      response.setProjects(projectDtos);
+      response.setSuccess(true);
+      response.setResponseMessage("Projects fetched successful");
+      return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
+    }
+
+    for (Project project : projects) {
+      ProjectDto projectDto = new ProjectDto();
+      projectDto.setId(project.getId());
+      projectDto.setName(project.getName());
+      projectDto.setDescription(project.getDescription());
+      projectDto.setCreatedDate(project.getCreatedDate());
+      projectDto.setRequirement(project.getRequirement());
+      projectDto.setDeadlineDate(project.getDeadlineDate());
+      projectDto.setProjectStatus(project.getStatus());
+
+      if (project.getManagerId() == 0) {
+
+        projectDto.setAssignedToManager(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setAssignedDate(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setManagerName(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setProjectStatus(ProjectAssignStatus.NOT_ASSIGNED_TO_MANAGER.value());
+
+        projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
+
+        projectDtos.add(projectDto);
+
+        continue;
+      } else {
+        User manager = this.userService.getUserById(project.getManagerId());
+
+        projectDto.setManagerName(manager.getFirstName() + " " + manager.getLastName());
+        projectDto.setManagerId(manager.getId());
+        projectDto.setAssignedToManager(ProjectAssignStatus.ASSIGNED_TO_MANAGER.value());
+        projectDto.setAssignedDate(project.getAssignedDate());
+      }
+
+      if (project.getEmployeeId() == 0) {
+        projectDto.setAssignedToEmployee(ProjectAssignStatus.NOT_ASSIGNED.value());
+        projectDto.setEmployeeName(ProjectAssignStatus.NOT_ASSIGNED.value());
+
+        projectDtos.add(projectDto);
+
+        continue;
+      } else {
+        User employee = this.userService.getUserById(project.getEmployeeId());
+
+        projectDto.setEmployeeName(employee.getFirstName() + " " + employee.getLastName());
+        projectDto.setAssignedToEmployee(ProjectAssignStatus.ASSIGNED_TO_EMPLOYEE.value());
+
+        projectDtos.add(projectDto);
+      }
+    }
+
+    response.setProjects(projectDtos);
+    response.setSuccess(true);
+    response.setResponseMessage("Projects fetched successful");
+    return new ResponseEntity<ProjectResponseDto>(response, HttpStatus.OK);
+  }
+
+  @GetMapping("allStatus")
+  @ApiOperation(value = "Api to fetch all projects by name")
+  public ResponseEntity<List<String>> fetchAllProjectStatus() {
+    LOG.info("Recieved request for Fecth all the project status");
+
+    List<String> allStatus = new ArrayList<>();
+
+    for (ProjectStatus status : ProjectStatus.values()) {
+      allStatus.add(status.value());
+    }
+
+    return new ResponseEntity<List<String>>(allStatus, HttpStatus.OK);
+  }
 }

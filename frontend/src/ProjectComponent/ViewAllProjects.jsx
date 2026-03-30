@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const ViewAllProjects = () => {
   const [allProjects, setAllProjects] = useState([]);
 
-  const [projectName, setProjectName] = useState("");
-  const [projectId, setProjectId] = useState("");
+  const [projectName, setProjectName] = useState('');
+  const [projectId, setProjectId] = useState('');
 
   const navigate = useNavigate();
 
@@ -22,7 +22,7 @@ const ViewAllProjects = () => {
   }, []);
 
   const retrieveAllProject = async () => {
-    const response = await axios.get("http://localhost:8080/api/project/fetch");
+    const response = await axios.get('http://localhost:8080/api/project/fetch');
     console.log(response.data);
     return response.data;
   };
@@ -36,7 +36,7 @@ const ViewAllProjects = () => {
 
   const retrieveProjectByName = async () => {
     const response = await axios.get(
-      "http://localhost:8080/api/project/search?projectName=" + projectName
+      'http://localhost:8080/api/project/search?projectName=' + projectName,
     );
     console.log(response.data);
     return response.data;
@@ -44,7 +44,7 @@ const ViewAllProjects = () => {
 
   const searchProjectbyName = (e) => {
     getProjectsByName();
-    setProjectName("");
+    setProjectName('');
     e.preventDefault();
   };
 
@@ -57,7 +57,7 @@ const ViewAllProjects = () => {
 
   const retrieveProjectById = async () => {
     const response = await axios.get(
-      "http://localhost:8080/api/project/search/id?projectId=" + projectId
+      'http://localhost:8080/api/project/search/id?projectId=' + projectId,
     );
     console.log(response.data);
     return response.data;
@@ -65,12 +65,12 @@ const ViewAllProjects = () => {
 
   const searchProjectbyId = (e) => {
     getProjectsById();
-    setProjectId("");
+    setProjectId('');
     e.preventDefault();
   };
 
   const assignToManager = (project) => {
-    navigate("/project/assign/manager", { state: project });
+    navigate('/project/assign/manager', { state: project });
   };
 
   return (
@@ -78,7 +78,7 @@ const ViewAllProjects = () => {
       <div
         className="card form-card ms-2 me-2 mb-5 custom-bg border-color "
         style={{
-          height: "45rem",
+          height: '45rem',
         }}
       >
         <div className="card-header custom-bg-text text-center bg-color">
@@ -87,7 +87,7 @@ const ViewAllProjects = () => {
         <div
           className="card-body"
           style={{
-            overflowY: "auto",
+            overflowY: 'auto',
           }}
         >
           <div className="row g-3">
@@ -197,22 +197,18 @@ const ViewAllProjects = () => {
                       </td>
                       <td>
                         {(() => {
-                          if (project.assignedToManager === "Not Assigned") {
-                           
-                              return (
-                                <button
-                                  onClick={() => assignToManager(project)}
-                                  className="btn btn-sm bg-color custom-bg-text"
-                                >
-                                  <b>Assign To Manager</b>
-                                </button>
-                              );
-                            
+                          if (project.assignedToManager === 'Not Assigned') {
+                            return (
+                              <button
+                                onClick={() => assignToManager(project)}
+                                className="btn btn-sm bg-color custom-bg-text"
+                              >
+                                <b>Assign To Manager</b>
+                              </button>
+                            );
                           }
                         })()}
                       </td>
-
-                     
                     </tr>
                   );
                 })}

@@ -1,9 +1,9 @@
-import { useLocation } from "react-router-dom";
-import AdminHeader from "./AdminHeader";
-import EmployeeHeader from "./EmployeeHeader";
-import ManagerHeader from "./ManagerHeader";
-import NormalHeader from "./NormalHeader";
-import { getActiveSessions } from "../utils/authSession";
+import { useLocation } from 'react-router-dom';
+import AdminHeader from './AdminHeader';
+import EmployeeHeader from './EmployeeHeader';
+import ManagerHeader from './ManagerHeader';
+import NormalHeader from './NormalHeader';
+import { getActiveSessions } from '../utils/authSession';
 
 const RoleNav = () => {
   useLocation();

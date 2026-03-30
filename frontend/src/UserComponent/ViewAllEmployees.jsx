@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-import React from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import React from 'react';
+import { ToastContainer, toast } from 'react-toastify';
 
 const ViewAllEmployees = () => {
   const [allEmployees, setAllEmployees] = useState([]);
@@ -19,27 +19,27 @@ const ViewAllEmployees = () => {
 
   const retrieveAllEmployees = async () => {
     const response = await axios.get(
-      "http://localhost:8080/api/user/employee/all"
+      'http://localhost:8080/api/user/employee/all',
     );
     console.log(response.data);
     return response.data;
   };
 
   const deleteEmployee = (userId) => {
-    fetch("http://localhost:8080/api/user/delete?userId=" + userId, {
-      method: "DELETE",
+    fetch('http://localhost:8080/api/user/delete?userId=' + userId, {
+      method: 'DELETE',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
     })
       .then((result) => {
         result.json().then((res) => {
           if (res.success) {
-            console.log("Got the success response");
+            console.log('Got the success response');
 
             toast.success(res.responseMessage, {
-              position: "top-center",
+              position: 'top-center',
               autoClose: 1000,
               hideProgressBar: false,
               closeOnClick: true,
@@ -48,9 +48,9 @@ const ViewAllEmployees = () => {
               progress: undefined,
             });
           } else {
-            console.log("Failed to delete the employee");
-            toast.error("It seems server is down", {
-              position: "top-center",
+            console.log('Failed to delete the employee');
+            toast.error('It seems server is down', {
+              position: 'top-center',
               autoClose: 1000,
               hideProgressBar: false,
               closeOnClick: true,
@@ -63,8 +63,8 @@ const ViewAllEmployees = () => {
       })
       .catch((error) => {
         console.error(error);
-        toast.error("It seems server is down", {
-          position: "top-center",
+        toast.error('It seems server is down', {
+          position: 'top-center',
           autoClose: 1000,
           hideProgressBar: false,
           closeOnClick: true,
@@ -84,7 +84,7 @@ const ViewAllEmployees = () => {
       <div
         className="card form-card ms-2 me-2 mb-5 custom-bg border-color "
         style={{
-          height: "45rem",
+          height: '45rem',
         }}
       >
         <div className="card-header custom-bg-text text-center bg-color">
@@ -93,7 +93,7 @@ const ViewAllEmployees = () => {
         <div
           className="card-body"
           style={{
-            overflowY: "auto",
+            overflowY: 'auto',
           }}
         >
           <div className="table-responsive">
@@ -129,9 +129,9 @@ const ViewAllEmployees = () => {
                       <td>
                         <b>
                           {employee.street +
-                            " " +
+                            ' ' +
                             employee.city +
-                            " " +
+                            ' ' +
                             employee.pincode}
                         </b>
                       </td>

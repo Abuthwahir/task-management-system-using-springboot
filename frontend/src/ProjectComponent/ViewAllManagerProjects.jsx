@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const ViewAllManagerProjects = () => {
-  const manager = JSON.parse(sessionStorage.getItem("active-manager"));
+  const manager = JSON.parse(sessionStorage.getItem('active-manager'));
 
   const [allProjects, setAllProjects] = useState([]);
 
-  const [projectName, setProjectName] = useState("");
+  const [projectName, setProjectName] = useState('');
 
   const navigate = useNavigate();
 
@@ -18,8 +18,8 @@ const ViewAllManagerProjects = () => {
 
     const getAllProjects = async () => {
       const response = await axios.get(
-        "http://localhost:8080/api/project/fetch/manager?managerId=" +
-          manager.id
+        'http://localhost:8080/api/project/fetch/manager?managerId=' +
+          manager.id,
       );
       console.log(response.data);
       setAllProjects(response.data.projects || []);
@@ -37,9 +37,10 @@ const ViewAllManagerProjects = () => {
 
   const retrieveProjectByName = async () => {
     const response = await axios.get(
-      "http://localhost:8080/api/project/manager/search?projectName=" + projectName +
-        "&managerId=" +
-        manager.id
+      'http://localhost:8080/api/project/manager/search?projectName=' +
+        projectName +
+        '&managerId=' +
+        manager.id,
     );
     console.log(response.data);
     return response.data;
@@ -47,12 +48,12 @@ const ViewAllManagerProjects = () => {
 
   const searchProjectbyName = (e) => {
     getProjectsByName();
-    setProjectName("");
+    setProjectName('');
     e.preventDefault();
   };
 
   const assignToEmployee = (project) => {
-    navigate("/project/assign/employee", { state: project });
+    navigate('/project/assign/employee', { state: project });
   };
 
   return (
@@ -60,7 +61,7 @@ const ViewAllManagerProjects = () => {
       <div
         className="card form-card ms-2 me-2 mb-5 custom-bg border-color "
         style={{
-          height: "45rem",
+          height: '45rem',
         }}
       >
         <div className="card-header custom-bg-text text-center bg-color">
@@ -69,7 +70,7 @@ const ViewAllManagerProjects = () => {
         <div
           className="card-body"
           style={{
-            overflowY: "auto",
+            overflowY: 'auto',
           }}
         >
           <div className="row g-3">
@@ -96,7 +97,6 @@ const ViewAllManagerProjects = () => {
                 </div>
               </form>
             </div>
-            
           </div>
           <div className="table-responsive">
             <table className="table table-hover text-color text-center">
@@ -156,7 +156,7 @@ const ViewAllManagerProjects = () => {
                       </td>
                       <td>
                         {(() => {
-                          if (project.assignedToEmployee === "Not Assigned") {
+                          if (project.assignedToEmployee === 'Not Assigned') {
                             return (
                               <button
                                 onClick={() => assignToEmployee(project)}

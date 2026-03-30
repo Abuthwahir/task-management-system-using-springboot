@@ -1,16 +1,16 @@
-import { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
-import { setActiveUserSession } from "../utils/authSession";
+import { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
+import { setActiveUserSession } from '../utils/authSession';
 
 const UserLoginForm = () => {
   const navigate = useNavigate();
 
   const [loginRequest, setLoginRequest] = useState({
-    emailId: "",
-    password: "",
-    role: "",
+    emailId: '',
+    password: '',
+    role: '',
   });
 
   const handleUserInput = (e) => {
@@ -20,30 +20,30 @@ const UserLoginForm = () => {
   const loginAction = (e) => {
     e.preventDefault();
 
-    fetch("http://localhost:8080/api/user/login", {
-      method: "POST",
+    fetch('http://localhost:8080/api/user/login', {
+      method: 'POST',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(loginRequest),
     })
       .then((result) => {
-        console.log("result", result);
+        console.log('result', result);
         result.json().then((res) => {
           console.log(res);
 
           if (res.success) {
-            console.log("Got the success response");
+            console.log('Got the success response');
 
             const jwtToken = res.user?.jwtToken;
 
             if (jwtToken) {
-              console.log("JWT TOKEN not null, positive response");
+              console.log('JWT TOKEN not null, positive response');
               setActiveUserSession(res.user);
 
               toast.success(res.responseMessage, {
-                position: "top-center",
+                position: 'top-center',
                 autoClose: 1000,
                 hideProgressBar: false,
                 closeOnClick: true,
@@ -53,11 +53,11 @@ const UserLoginForm = () => {
               });
 
               setTimeout(() => {
-                navigate("/home", { replace: true });
+                navigate('/home', { replace: true });
               }, 1000);
             } else {
               toast.error(res.responseMessage, {
-                position: "top-center",
+                position: 'top-center',
                 autoClose: 1000,
                 hideProgressBar: false,
                 closeOnClick: true,
@@ -68,8 +68,8 @@ const UserLoginForm = () => {
             }
           } else {
             console.log("Didn't got success response");
-            toast.error("It seems server is down", {
-              position: "top-center",
+            toast.error('It seems server is down', {
+              position: 'top-center',
               autoClose: 1000,
               hideProgressBar: false,
               closeOnClick: true,
@@ -82,8 +82,8 @@ const UserLoginForm = () => {
       })
       .catch((error) => {
         console.error(error);
-        toast.error("It seems server is down", {
-          position: "top-center",
+        toast.error('It seems server is down', {
+          position: 'top-center',
           autoClose: 1000,
           hideProgressBar: false,
           closeOnClick: true,
@@ -99,7 +99,7 @@ const UserLoginForm = () => {
       <div className="mt-2 d-flex aligns-items-center justify-content-center">
         <div
           className="card form-card border-color custom-bg"
-          style={{ width: "25rem" }}
+          style={{ width: '25rem' }}
         >
           <div className="card-header bg-color text-center custom-bg-text">
             <h4 className="card-title">User Login</h4>
@@ -151,10 +151,7 @@ const UserLoginForm = () => {
                   autoComplete="on"
                 />
               </div>
-              <button
-                type="submit"
-                className="btn bg-color custom-bg-text"
-              >
+              <button type="submit" className="btn bg-color custom-bg-text">
                 Login
               </button>
               <ToastContainer />

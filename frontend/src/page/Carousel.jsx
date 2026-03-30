@@ -1,4 +1,4 @@
-import carousel from "../images/task_slider.png";
+import carousel from '../images/task_slider.png';
 
 const Carousel = () => {
   return (

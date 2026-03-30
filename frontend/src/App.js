@@ -1,21 +1,21 @@
-import "./App.css";
-import "./styles/TaskieTheme.css";
-import { Route, Routes } from "react-router-dom";
-import LandingPage from "./components/landing/LandingPage";
-import ContactUs from "./page/ContactUs";
-import UserRegister from "./UserComponent/UserRegister";
-import AboutUs from "./page/AboutUs";
-import UserLoginForm from "./UserComponent/UserLoginForm";
-import ViewAllManagers from "./UserComponent/ViewAllManagers";
-import ViewAllEmployees from "./UserComponent/ViewAllEmployees";
-import AddProject from "./ProjectComponent/AddProject";
-import ViewAllProjects from "./ProjectComponent/ViewAllProjects";
-import AssignProjectToManager from "./ProjectComponent/AssignProjectToManager";
-import ViewAllManagerProjects from "./ProjectComponent/ViewAllManagerProjects";
-import AssignProjectToEmployee from "./ProjectComponent/AssignProjectToEmployee";
-import ViewAllEmployeeProjects from "./ProjectComponent/ViewAllEmployeeProjects";
-import UpdateProjectStatus from "./ProjectComponent/UpdateProjectStatus";
-import ChangePassword from "./UserComponent/ChangePassword";
+import './App.css';
+import './styles/TaskieTheme.css';
+import { Route, Routes } from 'react-router-dom';
+import LandingPage from './components/landing/LandingPage';
+import ContactUs from './page/ContactUs';
+import UserRegister from './UserComponent/UserRegister';
+import AboutUs from './page/AboutUs';
+import UserLoginForm from './UserComponent/UserLoginForm';
+import ViewAllManagers from './UserComponent/ViewAllManagers';
+import ViewAllEmployees from './UserComponent/ViewAllEmployees';
+import AddProject from './ProjectComponent/AddProject';
+import ViewAllProjects from './ProjectComponent/ViewAllProjects';
+import AssignProjectToManager from './ProjectComponent/AssignProjectToManager';
+import ViewAllManagerProjects from './ProjectComponent/ViewAllManagerProjects';
+import AssignProjectToEmployee from './ProjectComponent/AssignProjectToEmployee';
+import ViewAllEmployeeProjects from './ProjectComponent/ViewAllEmployeeProjects';
+import UpdateProjectStatus from './ProjectComponent/UpdateProjectStatus';
+import ChangePassword from './UserComponent/ChangePassword';
 
 function App() {
   return (

@@ -1,51 +1,49 @@
 package com.taskmanagement.dto;
 
-import org.springframework.http.HttpStatus;
-
 import lombok.Builder;
+import org.springframework.http.HttpStatus;
 
 @Builder
 public class CommonApiResponse {
 
-	private String responseMessage;
+  private String responseMessage;
 
-	private HttpStatus status;
+  private HttpStatus status;
 
-	private boolean isSuccess;
+  private boolean isSuccess;
 
-	public CommonApiResponse(String responseMessage, HttpStatus status, boolean isSuccess) {
-		super();
-		this.responseMessage = responseMessage;
-		this.status = status;
-		this.isSuccess = isSuccess;
-	}
-	
-	public CommonApiResponse() {
-		super();
-	}
+  public CommonApiResponse(String responseMessage, HttpStatus status, boolean isSuccess) {
+    super();
+    this.responseMessage = responseMessage;
+    this.status = status;
+    this.isSuccess = isSuccess;
+  }
 
-	public String getResponseMessage() {
-		return responseMessage;
-	}
+  public CommonApiResponse() {
+    super();
+  }
 
-	public void setResponseMessage(String responseMessage) {
-		this.responseMessage = responseMessage;
-	}
+  public String getResponseMessage() {
+    return responseMessage;
+  }
 
-	public HttpStatus getStatus() {
-		return status;
-	}
+  public void setResponseMessage(String responseMessage) {
+    this.responseMessage = responseMessage;
+  }
 
-	public void setStatus(HttpStatus status) {
-		this.status = status;
-	}
+  public HttpStatus getStatus() {
+    return status;
+  }
 
-	public boolean isSuccess() {
-		return isSuccess;
-	}
+  public void setStatus(HttpStatus status) {
+    this.status = status;
+  }
 
-	public void setSuccess(boolean isSuccess) {
-		this.isSuccess = isSuccess;
-	}
+  public boolean isSuccess() {
+    return isSuccess;
+  }
 
+  public void setSuccess(boolean isSuccess) {
+    this.isSuccess = isSuccess;
+  }
 }

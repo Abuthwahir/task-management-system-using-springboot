@@ -1,32 +1,32 @@
-import { useState, useEffect } from "react";
-import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer, toast } from "react-toastify";
-import axios from "axios";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';
+import axios from 'axios';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const UserRegister = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
-  const role = pathname.includes("admin")
-    ? "admin"
-    : pathname.includes("manager")
-    ? "manager"
-    : pathname.includes("employee")
-    ? "employee"
-    : "";
+  const role = pathname.includes('admin')
+    ? 'admin'
+    : pathname.includes('manager')
+      ? 'manager'
+      : pathname.includes('employee')
+        ? 'employee'
+        : '';
 
   const [user, setUser] = useState({
-    firstName: "",
-    lastName: "",
-    emailId: "",
-    password: "",
-    contact: "",
-    street: "",
-    city: "",
-    pincode: "",
-    age: "",
-    sex: "",
+    firstName: '',
+    lastName: '',
+    emailId: '',
+    password: '',
+    contact: '',
+    street: '',
+    city: '',
+    pincode: '',
+    age: '',
+    sex: '',
   });
 
   const handleUserInput = (e) => {
@@ -36,7 +36,7 @@ const UserRegister = () => {
   const [genders, setGenders] = useState([]);
 
   const retrieveAllGenders = async () => {
-    const response = await axios.get("http://localhost:8080/api/user/gender");
+    const response = await axios.get('http://localhost:8080/api/user/gender');
     return response.data;
   };
 
@@ -55,23 +55,23 @@ const UserRegister = () => {
     event.preventDefault();
     const userToRegister = { ...user, role };
 
-    fetch("http://localhost:8080/api/user/" + role + "/register", {
-      method: "POST",
+    fetch('http://localhost:8080/api/user/' + role + '/register', {
+      method: 'POST',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(userToRegister),
     }).then((result) => {
-      console.log("result", result);
+      console.log('result', result);
       result.json().then((res) => {
         console.log(res);
 
         if (res.success) {
-          console.log("Got the success response");
+          console.log('Got the success response');
 
           toast.success(res.responseMessage, {
-            position: "top-center",
+            position: 'top-center',
             autoClose: 1000,
             hideProgressBar: false,
             closeOnClick: true,
@@ -81,12 +81,12 @@ const UserRegister = () => {
           });
 
           setTimeout(() => {
-            navigate("/user/login");
+            navigate('/user/login');
           }, 1000); // Redirect after 3 seconds
         } else {
           console.log("Didn't got success response");
-          toast.error("It seems server is down", {
-            position: "top-center",
+          toast.error('It seems server is down', {
+            position: 'top-center',
             autoClose: 1000,
             hideProgressBar: false,
             closeOnClick: true,
@@ -107,7 +107,7 @@ const UserRegister = () => {
       <div className="mt-2 d-flex aligns-items-center justify-content-center ms-2 me-2 mb-2">
         <div
           className="card form-card border-color text-color custom-bg"
-          style={{ width: "50rem" }}
+          style={{ width: '50rem' }}
         >
           <div className="card-header bg-color custom-bg-text text-center">
             <h5 className="card-title">Register {role}</h5>
