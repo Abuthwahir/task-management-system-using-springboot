@@ -7,6 +7,22 @@ import { setActiveUserSession } from '../utils/authSession';
 const UserLoginForm = () => {
   const navigate = useNavigate();
 
+  const getRedirectPathByRole = (role) => {
+    if (role === 'admin') {
+      return '/user/admin/project/all';
+    }
+
+    if (role === 'manager') {
+      return '/user/manager/project/all';
+    }
+
+    if (role === 'employee') {
+      return '/user/employee/project/all';
+    }
+
+    return '/home';
+  };
+
   const [loginRequest, setLoginRequest] = useState({
     emailId: '',
     password: '',
@@ -53,7 +69,9 @@ const UserLoginForm = () => {
               });
 
               setTimeout(() => {
-                navigate('/home', { replace: true });
+                navigate(getRedirectPathByRole(res.user?.role), {
+                  replace: true,
+                });
               }, 1000);
             } else {
               toast.error(res.responseMessage, {
@@ -68,7 +86,7 @@ const UserLoginForm = () => {
             }
           } else {
             console.log("Didn't got success response");
-            toast.error('It seems server is down', {
+            toast.error(res.responseMessage || 'Login failed', {
               position: 'top-center',
               autoClose: 1000,
               hideProgressBar: false,

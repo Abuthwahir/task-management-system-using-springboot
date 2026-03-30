@@ -37,7 +37,7 @@
 
 .btn.primary {
   background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-  color: white;
+  color: #111827;
 }
 
 .btn.secondary {

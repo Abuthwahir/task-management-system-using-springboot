@@ -1,6 +1,6 @@
 import './App.css';
 import './styles/TaskieTheme.css';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import LandingPage from './components/landing/LandingPage';
 import ContactUs from './page/ContactUs';
 import UserRegister from './UserComponent/UserRegister';
@@ -23,6 +23,11 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/home" element={<LandingPage />} />
+        <Route path="/login" element={<Navigate to="/user/login" replace />} />
+        <Route
+          path="/register"
+          element={<Navigate to="/user/employee/register" replace />}
+        />
         <Route path="contact" element={<ContactUs />} />
         <Route path="about" element={<AboutUs />} />
         <Route path="user/admin/register" element={<UserRegister />} />

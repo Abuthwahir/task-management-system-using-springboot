@@ -19,6 +19,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -32,7 +33,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("api/project/")
-@CrossOrigin(origins = "${app.cors.allowed-origin:http://localhost:3000}")
+@CrossOrigin(
+    origins = {
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "http://127.0.0.1:3000",
+      "http://127.0.0.1:3001"
+    })
 public class ProjectController {
 
   Logger LOG = LoggerFactory.getLogger(ProjectController.class);
@@ -71,16 +78,24 @@ public class ProjectController {
     project.setStatus(ProjectAssignStatus.NOT_ASSIGNED_TO_MANAGER.value());
     project.setCreatedDate(formattedTodaysDate);
 
-    Project addedProduct = this.projectService.addProject(project);
+    try {
+      Project addedProduct = this.projectService.addProject(project);
 
-    if (addedProduct != null) {
-      response.setSuccess(true);
-      response.setResponseMessage("Project Added Successfully");
-      return new ResponseEntity<CommonApiResponse>(response, HttpStatus.OK);
-    } else {
+      if (addedProduct != null) {
+        response.setSuccess(true);
+        response.setResponseMessage("Project Added Successfully");
+        return new ResponseEntity<CommonApiResponse>(response, HttpStatus.OK);
+      } else {
+        response.setSuccess(false);
+        response.setResponseMessage("Failed to add project");
+        return new ResponseEntity<CommonApiResponse>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    } catch (DataIntegrityViolationException ex) {
+      LOG.error("Project data violates database constraints", ex);
       response.setSuccess(false);
-      response.setResponseMessage("Failed to add project");
-      return new ResponseEntity<CommonApiResponse>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+      response.setResponseMessage(
+          "Project description or requirement is too long. Please shorten and try again.");
+      return new ResponseEntity<CommonApiResponse>(response, HttpStatus.BAD_REQUEST);
     }
   }
 

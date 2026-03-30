@@ -41,7 +41,7 @@
 
 .nav-button {
   background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-  color: white;
+  color: #111827;
   padding: 0.5rem 1rem;
   border-radius: 20px;
   text-decoration: none;

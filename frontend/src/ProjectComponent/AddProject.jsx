@@ -29,14 +29,13 @@ const AddProject = () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(addProjectRequest),
-    }).then((result) => {
-      console.log('result', result);
-      result.json().then((res) => {
+    })
+      .then(async (result) => {
+        console.log('result', result);
+        const res = await result.json();
         console.log(res);
 
         if (res.success) {
-          console.log('Got the success response');
-
           toast.success(res.responseMessage, {
             position: 'top-center',
             autoClose: 1000,
@@ -49,24 +48,32 @@ const AddProject = () => {
 
           setTimeout(() => {
             navigate('/user/admin/project/all');
-          }, 1000); // Redirect after 3 seconds
-        } else {
-          console.log("Didn't got success response");
-          toast.error('It seems server is down', {
-            position: 'top-center',
-            autoClose: 1000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
-          setTimeout(() => {
-            window.location.reload(true);
-          }, 1000); // Redirect after 3 seconds
+          }, 1000);
+          return;
         }
+
+        toast.error(res.responseMessage || 'Failed to add project', {
+          position: 'top-center',
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error('Unable to reach server', {
+          position: 'top-center',
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       });
-    });
   };
 
   return (

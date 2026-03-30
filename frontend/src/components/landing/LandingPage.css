@@ -3,11 +3,12 @@
 :root {
   --primary-color: #6D28D9;
   --secondary-color: #EC4899;
-  --text-color: #E5E7EB;
-  --bg-color-dark: #111827;
-  --bg-color-light: #1F2937;
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --border-color: rgba(255, 255, 255, 0.1);
+  --text-color: #111827;
+  --text-color-light: #1f2937;
+  --bg-color-dark: #f3f4f6;
+  --bg-color-light: #ffffff;
+  --glass-bg: rgba(255, 255, 255, 0.82);
+  --border-color: rgba(17, 24, 39, 0.12);
 }
 
 * {
@@ -18,7 +19,10 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  background-color: var(--bg-color-dark);
+  background:
+    radial-gradient(circle at top left, rgba(109, 40, 217, 0.08), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(236, 72, 153, 0.08), transparent 24%),
+    #f7f8fc;
   color: var(--text-color);
   overflow-x: hidden;
 }

@@ -37,7 +37,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("api/user/")
-@CrossOrigin(origins = "${app.cors.allowed-origin:http://localhost:3000}")
+@CrossOrigin(
+    origins = {
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "http://127.0.0.1:3000",
+      "http://127.0.0.1:3001"
+    })
 public class UserController {
 
   Logger LOG = LoggerFactory.getLogger(UserController.class);

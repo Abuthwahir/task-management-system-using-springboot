@@ -73,6 +73,10 @@ const ViewAllProjects = () => {
     navigate('/project/assign/manager', { state: project });
   };
 
+  const goToAddProject = () => {
+    navigate('/user/admin/project/add');
+  };
+
   return (
     <div className="mt-3">
       <div
@@ -91,6 +95,15 @@ const ViewAllProjects = () => {
           }}
         >
           <div className="row g-3">
+            <div className="col-auto">
+              <button
+                type="button"
+                className="btn bg-color custom-bg-text"
+                onClick={goToAddProject}
+              >
+                Add New Project
+              </button>
+            </div>
             <div className="col-auto">
               <form className="row g-3">
                 <div className="col-auto">
